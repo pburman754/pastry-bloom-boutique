@@ -2,95 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Luxury Bakery Design System - Premium colors, fonts, and animations */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Luxury Color Palette */
+    --background: 30 15% 97%; /* Soft cream */
+    --foreground: 20 14% 15%; /* Rich dark brown */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%; /* Pure white for cards */
+    --card-foreground: 20 14% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 20 14% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Elegant rose gold */
+    --primary: 15 65% 70%; /* Warm rose */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Soft blush */
+    --secondary: 350 25% 95%; /* Light blush */
+    --secondary-foreground: 20 14% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted - Refined neutral */
+    --muted: 30 10% 95%; /* Soft grey-cream */
+    --muted-foreground: 20 8% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Luxury gold */
+    --accent: 45 85% 65%; /* Warm gold */
+    --accent-foreground: 20 14% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 30 15% 90%; /* Subtle cream border */
+    --input: 30 15% 90%;
+    --ring: 15 65% 70%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem; /* Softer radius for luxury feel */
 
-    --sidebar-background: 0 0% 98%;
+    /* Luxury gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(15 65% 70%), hsl(25 70% 75%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 85% 65%), hsl(50 90% 70%));
+    --gradient-cream: linear-gradient(180deg, hsl(30 15% 97%), hsl(25 20% 95%));
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Premium shadows */
+    --shadow-luxury: 0 8px 32px hsla(15, 25%, 70%, 0.12);
+    --shadow-card: 0 4px 20px hsla(15, 15%, 85%, 0.15);
+    --shadow-gold: 0 0 20px hsla(45, 85%, 65%, 0.2);
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Elegant transitions */
+    --transition-luxury: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 20 14% 8%; /* Rich dark chocolate */
+    --foreground: 30 15% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 20 14% 12%;
+    --card-foreground: 30 15% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 20 14% 12%;
+    --popover-foreground: 30 15% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 15 65% 75%; /* Brighter rose in dark mode */
+    --primary-foreground: 20 14% 8%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 20 14% 15%;
+    --secondary-foreground: 30 15% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 20 14% 15%;
+    --muted-foreground: 30 8% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 45 85% 70%; /* Brighter gold in dark mode */
+    --accent-foreground: 20 14% 8%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 75% 65%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 20 14% 20%;
+    --input: 20 14% 20%;
+    --ring: 15 65% 75%;
+
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(15 65% 75%), hsl(25 70% 80%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 85% 70%), hsl(50 90% 75%));
+    --gradient-cream: linear-gradient(180deg, hsl(20 14% 8%), hsl(25 16% 10%));
   }
 }
 
@@ -100,6 +98,56 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  /* Luxury typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-medium leading-tight tracking-tight;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Premium button variants */
+  .btn-luxury {
+    @apply bg-gradient-to-r from-primary to-accent text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105;
+  }
+
+  .btn-outline-luxury {
+    @apply border-2 border-primary text-primary bg-transparent px-8 py-3 rounded-xl font-medium hover:bg-primary hover:text-white transition-all duration-300;
+  }
+
+  /* Elegant card styling */
+  .card-luxury {
+    @apply bg-card rounded-2xl shadow-card hover:shadow-luxury transition-all duration-300 hover:-translate-y-1;
+  }
+
+  /* Premium input styling */
+  .input-luxury {
+    @apply w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-colors duration-300;
+  }
+
+  /* Animated underline for links */
+  .link-animated {
+    @apply relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+
+  /* Product grid animations */
+  .product-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-luxury;
+  }
+
+  /* Gold accent elements */
+  .accent-gold {
+    @apply text-accent font-medium;
+  }
+
+  .bg-gold-gradient {
+    background: var(--gradient-gold);
   }
 }
