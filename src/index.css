@@ -234,6 +234,12 @@
   }
 }
 
+@layer utilities {
+  /* Rows that scroll sideways on small screens, without a scrollbar strip */
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

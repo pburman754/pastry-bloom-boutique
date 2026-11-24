@@ -1,242 +1,198 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Filter, Grid, List, SlidersHorizontal } from 'lucide-react';
+import { useEffect, useMemo, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Search, X } from 'lucide-react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { products } from '@/data/mockData';
 import ProductCard from '@/components/products/ProductCard';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { useSearchParams } from 'react-router-dom';
+import PageHead from '@/components/layout/PageHead';
+import { silk } from '@/components/motion/Rise';
+import { usePageTitle } from '@/hooks/use-page-title';
+
+const shelves = [
+  { id: 'all', label: 'Everything' },
+  { id: 'croissants', label: 'Croissants' },
+  { id: 'macarons', label: 'Macarons & petits fours' },
+  { id: 'breads', label: 'Breads' },
+  { id: 'cakes', label: 'Cakes' },
+];
+
+const sorts = [
+  { id: 'name', label: 'A to Z' },
+  { id: 'price-low', label: 'Price, low to high' },
+  { id: 'price-high', label: 'Price, high to low' },
+  { id: 'rating', label: 'Best loved' },
+];
 
 const Shop = () => {
+  usePageTitle('Shop');
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [filteredProducts, setFilteredProducts] = useState(products);
-  const [searchQuery, setSearchQuery] = useState('');
-  // The URL is the single source of truth for the category, so header/footer links always work.
-  const selectedCategory = searchParams.get('category') || 'all';
-  const [sortBy, setSortBy] = useState('name');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    let filtered = products;
+  // The address is the single source of truth, so every filtered view can be linked and shared.
+  const shelf = searchParams.get('category') || 'all';
+  const query = searchParams.get('q') || '';
+  const sortBy = searchParams.get('sort') || 'name';
 
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-
-    // Filter by search query
-    if (searchQuery) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Sort products
-    filtered = [...filtered].sort((a, b) => {
-      switch (sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'rating':
-          return b.rating - a.rating;
-        case 'name':
-        default:
-          return a.name.localeCompare(b.name);
-      }
-    });
-
-    setFilteredProducts(filtered);
-  }, [selectedCategory, searchQuery, sortBy]);
-
-  const handleCategoryChange = (category: string) => {
+  const setParam = (key: string, value: string, fallback: string) => {
     const next = new URLSearchParams(searchParams);
-    if (category === 'all') {
-      next.delete('category');
-    } else {
-      next.set('category', category);
-    }
+    if (!value || value === fallback) next.delete(key);
+    else next.set(key, value);
     setSearchParams(next, { replace: true });
   };
 
-  const categoryChips = [
-    { id: 'all', label: 'All' },
-    { id: 'croissants', label: 'Croissants' },
-    { id: 'macarons', label: 'Macarons & Petit Fours' },
-    { id: 'breads', label: 'Breads' },
-    { id: 'cakes', label: 'Cakes' },
-  ];
+  // The search button in the header lands here with the cursor already in the field.
+  useEffect(() => {
+    if ((location.state as { focusSearch?: boolean } | null)?.focusSearch) searchRef.current?.focus();
+  }, [location.state]);
+
+  const counts = useMemo(() => {
+    const byShelf: Record<string, number> = { all: products.length };
+    for (const p of products) byShelf[p.category] = (byShelf[p.category] ?? 0) + 1;
+    return byShelf;
+  }, []);
+
+  const shown = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return products
+      .filter((p) => shelf === 'all' || p.category === shelf)
+      .filter((p) => !q || p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))
+      .sort((a, b) => {
+        switch (sortBy) {
+          case 'price-low':
+            return a.price - b.price;
+          case 'price-high':
+            return b.price - a.price;
+          case 'rating':
+            return b.rating - a.rating;
+          default:
+            return a.name.localeCompare(b.name);
+        }
+      });
+  }, [shelf, query, sortBy]);
+
+  const clearAll = () => setSearchParams(new URLSearchParams(), { replace: true });
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h1 className="font-display text-5xl lg:text-7xl font-semibold tracking-[-0.02em] text-foreground mb-4">
-            Our Collection
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Discover our complete range of artisanal pastries, breads, and luxury desserts, 
-            each crafted with precision and passion.
-          </p>
-        </motion.div>
+    <div className="overflow-x-clip">
+      <PageHead
+        kicker="Shop"
+        aside={`${products.length} creations, baked daily`}
+        title="The whole"
+        italic="case."
+      >
+        {/* Shelves, then search and sort */}
+        <div className="flex flex-col xl:flex-row xl:items-center gap-5 xl:gap-10 py-5">
+          <nav aria-label="Shelves" className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto no-scrollbar">
+            <ul className="flex items-center gap-1 w-max">
+              {shelves.map((s) => {
+                const active = shelf === s.id;
+                return (
+                  <li key={s.id}>
+                    <button
+                      type="button"
+                      onClick={() => setParam('category', s.id, 'all')}
+                      aria-pressed={active}
+                      className={`relative inline-flex items-center gap-2 h-11 px-4 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-300 ${
+                        active ? 'text-foreground' : 'text-foreground/60 hover:text-foreground'
+                      }`}
+                    >
+                      {active && (
+                        <motion.span
+                          layoutId="shelf-pill"
+                          className="absolute inset-0 -z-0 rounded-full bg-accent border border-foreground"
+                          transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                        />
+                      )}
+                      <span className="relative">{s.label}</span>
+                      <span className="relative label text-[10px] tracking-[0.12em] opacity-60 tabular">{counts[s.id] ?? 0}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
-        {/* Filters & Search */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-card border border-border rounded-2xl p-6 mb-8 shadow-card"
-        >
-          <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-12"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-            {/* Sort */}
-            <div className="flex-1 lg:w-48 lg:flex-none">
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="h-12">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="name">Sort by Name</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="rating">Highest Rated</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* View Mode */}
-            <div className="hidden sm:flex space-x-2">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="lg"
-                onClick={() => setViewMode('grid')}
-                className="px-4"
+          <div className="flex items-center gap-3 xl:ml-auto">
+            <label className="relative flex-1 xl:w-72 xl:flex-none">
+              <span className="sr-only">Search the shop</span>
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-60" strokeWidth={1.6} />
+              <input
+                ref={searchRef}
+                type="search"
+                value={query}
+                onChange={(e) => setParam('q', e.target.value, '')}
+                placeholder="Search the case"
+                className="w-full h-11 pl-11 pr-4 rounded-full bg-transparent border border-foreground/30 placeholder:text-foreground/45 focus:border-foreground focus:outline-none transition-colors duration-300 [&::-webkit-search-cancel-button]:hidden"
+              />
+            </label>
+            <label className="relative shrink-0">
+              <span className="sr-only">Sort by</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setParam('sort', e.target.value, 'name')}
+                className="appearance-none h-11 pl-4 pr-10 rounded-full bg-transparent border border-foreground/30 text-sm font-medium hover:border-foreground focus:border-foreground focus:outline-none cursor-pointer transition-colors duration-300"
               >
-                <Grid className="w-5 h-5" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="lg"
-                onClick={() => setViewMode('list')}
-                className="px-4"
-              >
-                <List className="w-5 h-5" />
-              </Button>
-            </div>
-            </div>
+                {sorts.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+              <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[10px]">▼</span>
+            </label>
           </div>
+        </div>
+      </PageHead>
 
-          {/* Category chips */}
-          <div className="flex flex-wrap items-center gap-2 mt-5" role="tablist" aria-label="Filter by category">
-            {categoryChips.map(chip => {
-              const active = selectedCategory === chip.id;
-              return (
-                <button
-                  key={chip.id}
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => handleCategoryChange(chip.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${
-                    active
-                      ? 'bg-primary text-primary-foreground border-primary shadow-card'
-                      : 'bg-background text-foreground border-border hover:border-accent hover:text-primary'
-                  }`}
-                >
-                  {chip.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Active Filters */}
-          <div className="flex flex-wrap items-center gap-2 empty:hidden mt-4">
-            {searchQuery && (
-              <Badge variant="secondary" className="flex items-center gap-2">
-                Search: "{searchQuery}"
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="hover:bg-muted-foreground/20 rounded-full p-0.5"
-                >
-                  ×
-                </button>
-              </Badge>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Results Header */}
-        <div className="flex items-center justify-between mb-8">
-          <p className="text-muted-foreground">
-            Showing {filteredProducts.length} of {products.length} products
-          </p>
+      <section className="px-4 sm:px-6 lg:px-10 pt-10 pb-32">
+        <div className="flex items-center justify-between gap-4 mb-12 label opacity-70">
+          <span aria-live="polite">
+            {shown.length === products.length ? 'Showing everything' : `Showing ${shown.length} of ${products.length}`}
+          </span>
+          {(shelf !== 'all' || query) && (
+            <button type="button" onClick={clearAll} className="inline-flex items-center gap-1.5 uppercase hover:opacity-100">
+              <X className="w-3.5 h-3.5" /> <span className="link-animated">Clear</span>
+            </button>
+          )}
         </div>
 
-        {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
-          <div className={`grid gap-8 ${
-            viewMode === 'grid' 
-              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-              : 'grid-cols-1'
-          }`}>
-            {filteredProducts.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                index={index}
-              />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-          >
-            <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-              <Search className="w-12 h-12 text-muted-foreground" />
-            </div>
-            <h3 className="font-display text-2xl font-semibold text-foreground mb-4">
-              No products found
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Try adjusting your search criteria or browse our categories.
-            </p>
-            <Button
-              onClick={() => {
-                setSearchQuery('');
-                handleCategoryChange('all');
-              }}
-              className="bg-gradient-luxury hover:shadow-luxury rounded-full"
+        <AnimatePresence mode="wait" initial={false}>
+          {shown.length > 0 ? (
+            <motion.div
+              key={`${shelf}-${sortBy}-${query}`}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.45, ease: silk }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20"
             >
-              Clear Filters
-            </Button>
-          </motion.div>
-        )}
-
-      </div>
+              {shown.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5, ease: silk }}
+              className="py-16 max-w-2xl"
+            >
+              <p className="display text-[3.4rem] sm:text-[5rem]">
+                Nothing in the case <span className="display-italic">for that.</span>
+              </p>
+              <p className="mt-6 text-[17px] leading-relaxed text-muted-foreground">
+                {query ? `No bake matches “${query}”. ` : ''}Try another shelf, or see everything we baked this morning.
+              </p>
+              <button type="button" onClick={clearAll} className="btn-ink mt-10">
+                Show everything
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </section>
     </div>
   );
 };

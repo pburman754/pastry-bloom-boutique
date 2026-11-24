@@ -13,6 +13,7 @@ import ProductDetails from "@/pages/ProductDetails";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import OrderSuccess from "@/pages/OrderSuccess";
+import Help from "@/pages/Help";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import NotFound from "./pages/NotFound";
 
@@ -33,6 +34,7 @@ const AnimatedRoutes = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-success" element={<OrderSuccess />} />
+        <Route path="/help" element={<Help />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

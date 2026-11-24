@@ -1,23 +1,60 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, CreditCard, Truck, MapPin, Phone, Mail, User } from 'lucide-react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { usePageTitle } from '@/hooks/use-page-title';
+import PageHead from '@/components/layout/PageHead';
+import { silk } from '@/components/motion/Rise';
+import { deliveryFor, formatPrice } from '@/lib/shop';
+
+type FieldProps = {
+  label: string;
+  name: string;
+  className?: string;
+  hint?: string;
+} & React.InputHTMLAttributes<HTMLInputElement>;
+
+/** A labelled field: small capitals over a round, ink-ruled input. */
+const Field = ({ label, name, className = '', hint, ...input }: FieldProps) => (
+  <label className={`block ${className}`}>
+    <span className="label text-[10px] opacity-70">{label}</span>
+    <input
+      name={name}
+      className="mt-2 w-full h-14 px-5 rounded-2xl bg-card border border-foreground/25 text-[16px] placeholder:text-foreground/35 focus:border-foreground focus:outline-none transition-colors duration-300"
+      {...input}
+    />
+    {hint && <span className="mt-2 block text-xs text-muted-foreground">{hint}</span>}
+  </label>
+);
+
+const Step = ({ n, title, children }: { n: string; title: string; children: React.ReactNode }) => (
+  <motion.section
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.9, delay: Number(n) * 0.08, ease: silk }}
+    aria-labelledby={`step-${n}`}
+    className="grid grid-cols-12 gap-x-6 gap-y-6 border-t border-foreground pt-8 pb-12"
+  >
+    <div className="col-span-12 md:col-span-3 flex md:block items-baseline gap-4">
+      <p className="label opacity-60">{n}</p>
+      <h2 id={`step-${n}`} className="display text-[2.2rem] md:mt-3">
+        {title}
+      </h2>
+    </div>
+    <div className="col-span-12 md:col-span-9 grid grid-cols-2 gap-x-4 gap-y-6">{children}</div>
+  </motion.section>
+);
 
 const Checkout = () => {
-  const { items, total, clearCart } = useCart();
+  usePageTitle('Checkout');
+  const { items, total, itemCount, clearCart } = useCart();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const orderPlaced = useRef(false);
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     firstName: '',
     lastName: '',
     email: '',
@@ -26,43 +63,35 @@ const Checkout = () => {
     city: '',
     postalCode: '',
     notes: '',
-    paymentMethod: 'card',
   });
 
-  const deliveryFee = total > 50 ? 0 : 5.99;
-  const finalTotal = total + deliveryFee;
+  const delivery = deliveryFor(total);
+  const grandTotal = total + delivery;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulated order API (swap for a real endpoint / payment intent in production)
-    await new Promise(resolve => setTimeout(resolve, 1600));
+    // A demo shop: a short pause stands in for the payment provider.
+    await new Promise((resolve) => setTimeout(resolve, 1600));
 
     const order = {
       id: `MD-${Date.now().toString(36).toUpperCase().slice(-6)}`,
       items: items.map(({ id, name, image, price, quantity }) => ({ id, name, image, price, quantity })),
       subtotal: total,
-      deliveryFee,
-      total: finalTotal,
-      firstName: formData.firstName,
-      email: formData.email,
-      city: formData.city,
+      deliveryFee: delivery,
+      total: grandTotal,
+      firstName: form.firstName,
+      email: form.email,
+      city: form.city,
     };
 
-    toast({
-      title: "Order placed successfully!",
-      description: `Order ${order.id} is confirmed.`,
-    });
-
+    toast({ title: 'Order placed', description: `${order.id} is with our bakers.` });
     orderPlaced.current = true;
     navigate('/order-success', { state: { order }, replace: true });
     clearCart();
@@ -73,308 +102,114 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h1 className="font-display text-5xl lg:text-7xl font-semibold tracking-[-0.02em] text-foreground mb-4">
-            Checkout
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Complete your order and enjoy our premium delicacies
-          </p>
-        </motion.div>
+    <div className="overflow-x-clip">
+      <PageHead
+        kicker="Checkout"
+        aside={
+          <Link to="/cart" className="group inline-flex items-center gap-2">
+            <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-500 ease-silk group-hover:-translate-x-1" />
+            <span className="link-animated">Back to your box</span>
+          </Link>
+        }
+        title="Almost"
+        italic="yours."
+      />
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Checkout Form */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Customer Information */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="card-luxury p-6 bg-card border border-border"
-            >
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <h2 className="font-display text-xl font-semibold text-foreground">
-                  Customer Information
-                </h2>
-              </div>
+      <form onSubmit={handleSubmit} className="px-4 sm:px-6 lg:px-10 pt-10 pb-32 grid grid-cols-12 gap-x-10 gap-y-12 items-start">
+        <div className="col-span-12 lg:col-span-8">
+          <Step n="01" title="You">
+            <Field label="First name" name="firstName" value={form.firstName} onChange={onChange} autoComplete="given-name" required className="col-span-2 sm:col-span-1" />
+            <Field label="Last name" name="lastName" value={form.lastName} onChange={onChange} autoComplete="family-name" required className="col-span-2 sm:col-span-1" />
+            <Field label="Email" name="email" type="email" value={form.email} onChange={onChange} autoComplete="email" required className="col-span-2 sm:col-span-1" hint="For your receipt, nothing else." />
+            <Field label="Phone" name="phone" type="tel" value={form.phone} onChange={onChange} autoComplete="tel" required className="col-span-2 sm:col-span-1" hint="The driver rings when they're outside." />
+          </Step>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    required
-                    className="h-12"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    required
-                    className="h-12"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="h-12"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    required
-                    className="h-12"
-                  />
-                </div>
-              </div>
-            </motion.div>
+          <Step n="02" title="Where">
+            <Field label="Street address" name="address" value={form.address} onChange={onChange} autoComplete="street-address" required className="col-span-2" />
+            <Field label="City" name="city" value={form.city} onChange={onChange} autoComplete="address-level2" required className="col-span-2 sm:col-span-1" />
+            <Field label="Postal code" name="postalCode" value={form.postalCode} onChange={onChange} autoComplete="postal-code" required className="col-span-2 sm:col-span-1" />
+            <label className="block col-span-2">
+              <span className="label text-[10px] opacity-70">A note for us (optional)</span>
+              <textarea
+                name="notes"
+                value={form.notes}
+                onChange={onChange}
+                rows={3}
+                placeholder="Door code, the date for your cake, a message to pipe on it…"
+                className="mt-2 w-full px-5 py-4 rounded-2xl bg-card border border-foreground/25 text-[16px] placeholder:text-foreground/35 focus:border-foreground focus:outline-none transition-colors duration-300 resize-none"
+              />
+            </label>
+          </Step>
 
-            {/* Delivery Address */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="card-luxury p-6 bg-card border border-border"
-            >
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Truck className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <h2 className="font-display text-xl font-semibold text-foreground">
-                  Delivery Address
-                </h2>
-              </div>
+          <Step n="03" title="Pay">
+            <p className="col-span-2 rounded-2xl bg-secondary border border-foreground px-5 py-4 text-sm leading-relaxed">
+              <span className="font-semibold">This is a demo shop.</span> No card is charged. Use 4242 4242 4242 4242,
+              any future date and any three digits.
+            </p>
+            <Field label="Card number" name="cc-number" inputMode="numeric" autoComplete="cc-number" placeholder="4242 4242 4242 4242" required className="col-span-2" />
+            <Field label="Expiry" name="cc-exp" autoComplete="cc-exp" placeholder="MM / YY" required className="col-span-1" />
+            <Field label="CVC" name="cc-csc" inputMode="numeric" autoComplete="cc-csc" placeholder="123" required className="col-span-1" />
+            <Field label="Name on card" name="cc-name" autoComplete="cc-name" required className="col-span-2" />
+          </Step>
+        </div>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="address">Street Address</Label>
-                  <Input
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    required
-                    className="h-12"
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input
-                      id="city"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      required
-                      className="h-12"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="postalCode">Postal Code</Label>
-                    <Input
-                      id="postalCode"
-                      name="postalCode"
-                      value={formData.postalCode}
-                      onChange={handleInputChange}
-                      required
-                      className="h-12"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Delivery Notes (Optional)</Label>
-                  <Textarea
-                    id="notes"
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleInputChange}
-                    placeholder="Special instructions for delivery..."
-                    className="min-h-20"
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Payment Method */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="card-luxury p-6 bg-card border border-border"
-            >
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <h2 className="font-display text-xl font-semibold text-foreground">
-                  Payment Method
-                </h2>
-              </div>
-
-              <div className="space-y-4">
-                <div className="bg-muted/50 border border-border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <CreditCard className="w-5 h-5 text-primary" />
-                      <div>
-                        <p className="font-medium text-foreground">Credit/Debit Card</p>
-                        <p className="text-sm text-muted-foreground">Secure payment processing</p>
-                      </div>
-                    </div>
-                    <Badge className="bg-primary text-primary-foreground">
-                      Recommended
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input placeholder="Card Number" name="cc-number" inputMode="numeric" autoComplete="cc-number" className="h-12" required />
-                  <Input placeholder="MM/YY" name="cc-exp" autoComplete="cc-exp" className="h-12" required />
-                  <Input placeholder="Cardholder Name" name="cc-name" autoComplete="cc-name" className="h-12" required />
-                  <Input placeholder="CVV" name="cc-csc" inputMode="numeric" autoComplete="cc-csc" className="h-12" required />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Demo store: no payment is taken. Use test card 4242 4242 4242 4242, any future date and any CVV.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Order Summary */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="space-y-6"
-          >
-            <div className="card-luxury p-6 bg-card border border-border sticky top-8">
-              <h2 className="font-display text-2xl font-semibold text-foreground mb-6">
-                Order Summary
-              </h2>
-
-              {/* Items */}
-              <div className="space-y-4 mb-6">
-                {items.map((item) => (
-                  <div key={item.id} className="flex items-center space-x-3">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">
-                        {item.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Qty: {item.quantity}
-                      </p>
-                    </div>
-                    <p className="font-medium text-foreground">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <Separator />
-
-              {/* Totals */}
-              <div className="space-y-3 py-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium text-foreground">${total.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Delivery</span>
-                  <span className="font-medium text-foreground">
-                    {deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : 'Free'}
-                  </span>
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between text-lg">
-                  <span className="font-semibold text-foreground">Total</span>
-                  <span className="font-display font-semibold text-foreground text-xl">
-                    ${finalTotal.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Place Order Button */}
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-gradient-luxury hover:shadow-luxury rounded-full font-semibold py-3 text-lg mt-6"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Processing...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <Check className="w-5 h-5" />
-                    <span>Place Order</span>
-                  </div>
-                )}
-              </Button>
-
-              {/* Trust Indicators */}
-              <div className="mt-6 pt-4 border-t border-border space-y-2">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <div className="w-4 h-4 bg-accent rounded-full mr-2 flex-shrink-0 flex items-center justify-center">
-                    <span className="text-xs text-white">✓</span>
-                  </div>
-                  256-bit SSL secure checkout
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <div className="w-4 h-4 bg-accent rounded-full mr-2 flex-shrink-0 flex items-center justify-center">
-                    <span className="text-xs text-white">✓</span>
-                  </div>
-                  Same-day delivery available
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <div className="w-4 h-4 bg-accent rounded-full mr-2 flex-shrink-0 flex items-center justify-center">
-                    <span className="text-xs text-white">✓</span>
-                  </div>
-                  Satisfaction guarantee
-                </div>
-              </div>
+        {/* The ticket */}
+        <aside className="col-span-12 lg:col-span-4 lg:sticky lg:top-28">
+          <div className="rounded-[1.75rem] border border-foreground bg-card p-7 sm:p-8">
+            <div className="flex items-baseline justify-between">
+              <p className="label">The ticket</p>
+              <p className="label opacity-60">
+                {itemCount} {itemCount === 1 ? 'piece' : 'pieces'}
+              </p>
             </div>
-          </motion.div>
-        </form>
-      </div>
+
+            <ul className="mt-7 space-y-4">
+              {items.map((item) => (
+                <li key={item.id} className="grid grid-cols-[3.25rem_1fr_auto] items-center gap-4">
+                  <span className="relative arch aspect-[4/5] border border-foreground bg-muted">
+                    <img src={item.image} alt="" className="w-full h-full object-cover" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-medium leading-snug truncate">{item.name}</span>
+                    <span className="block text-sm text-muted-foreground tabular">× {item.quantity}</span>
+                  </span>
+                  <span className="tabular">{formatPrice(item.price * item.quantity)}</span>
+                </li>
+              ))}
+            </ul>
+
+            <dl className="mt-7 pt-6 border-t border-foreground/30 space-y-3 text-[15px]">
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground">Pieces</dt>
+                <dd className="tabular">{formatPrice(total)}</dd>
+              </div>
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground">Delivery, today</dt>
+                <dd className="tabular">{delivery === 0 ? 'Free' : formatPrice(delivery)}</dd>
+              </div>
+            </dl>
+
+            <div className="mt-6 pt-6 border-t border-foreground flex items-baseline justify-between gap-4">
+              <span className="label">Total</span>
+              <span className="display text-[3rem] tabular leading-none">{formatPrice(grandTotal)}</span>
+            </div>
+
+            <button type="submit" disabled={isSubmitting} className="btn-ink w-full mt-8 disabled:opacity-80 disabled:cursor-wait">
+              {isSubmitting ? (
+                <>
+                  <span className="w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin" aria-hidden />
+                  Sending to the bakers
+                </>
+              ) : (
+                <>
+                  Place order <span className="opacity-50">·</span> <span className="tabular">{formatPrice(grandTotal)}</span>
+                </>
+              )}
+            </button>
+            <p className="mt-5 text-center text-sm text-muted-foreground">Order before 2 pm and it arrives today.</p>
+          </div>
+        </aside>
+      </form>
     </div>
   );
 };

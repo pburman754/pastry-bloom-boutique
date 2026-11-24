@@ -6,10 +6,11 @@ import { products, categories } from '@/data/mockData';
 import ProductCard from '@/components/products/ProductCard';
 import Rating from '@/components/products/Rating';
 import { useCountUp } from '@/hooks/use-count-up';
+import { Rise, silk } from '@/components/motion/Rise';
+import { usePageTitle } from '@/hooks/use-page-title';
 import heroImage from '@/assets/hero-bakery.jpg';
 import storyImage from '@/assets/artisan-bread.jpg';
 
-const silk = [0.22, 1, 0.36, 1] as const;
 
 const testimonials = [
   {
@@ -33,32 +34,6 @@ const testimonials = [
 ];
 
 const ribbon = ['Croissants', 'Macarons', 'Celebration cakes', 'Sourdough', 'Petits fours', 'Pain au chocolat'];
-
-/** A line of display type rising out of its own mask. */
-const Rise = ({
-  children,
-  delay = 0,
-  className = '',
-  onView = false,
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-  onView?: boolean;
-}) => (
-  <span className={`block overflow-hidden ${className}`}>
-    <motion.span
-      className="block"
-      initial={{ y: '105%' }}
-      {...(onView
-        ? { whileInView: { y: 0 }, viewport: { once: true, amount: 0.5 } }
-        : { animate: { y: 0 } })}
-      transition={{ duration: 1.3, delay, ease: silk }}
-    >
-      {children}
-    </motion.span>
-  </span>
-);
 
 /** The round stamp, its words set on a circle, turning slowly. */
 const Stamp = ({ className = '' }: { className?: string }) => (
@@ -95,17 +70,9 @@ const SectionHead = ({ number, title, italic, aside }: { number: string; title: 
       {number}
     </motion.p>
     <h2 className="col-span-12 md:col-span-7 display text-[3.4rem] sm:text-[5rem] lg:text-[6.5rem]">
-      <span className="block overflow-hidden">
-        <motion.span
-          className="block"
-          initial={{ y: '105%' }}
-          whileInView={{ y: 0 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 1.1, ease: silk }}
-        >
-          {title} <span className="display-italic">{italic}</span>
-        </motion.span>
-      </span>
+      <Rise onView>
+        {title} <span className="display-italic">{italic}</span>
+      </Rise>
     </h2>
     {aside && <div className="col-span-12 md:col-span-3 md:text-right mt-6 md:mt-0">{aside}</div>}
   </div>
@@ -125,6 +92,7 @@ const Stat = ({ value, suffix, label }: { value: number; suffix: string; label: 
 };
 
 const Home = () => {
+  usePageTitle();
   const reduce = useReducedMotion();
   const featured = products.filter((p) => p.isFeatured);
   const [hovered, setHovered] = useState(0);

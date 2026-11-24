@@ -99,7 +99,7 @@ const Header = () => {
               type="button"
               className="hidden md:grid place-items-center w-11 h-11 rounded-full hover:bg-foreground/5"
               aria-label="Search products"
-              onClick={() => navigate('/shop')}
+              onClick={() => navigate('/shop', { state: { focusSearch: true } })}
             >
               <Search className="w-[18px] h-[18px]" strokeWidth={1.5} />
             </button>

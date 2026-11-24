@@ -1,6 +1,7 @@
-import React from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, ArrowUp } from 'lucide-react';
 
 const footerSections = [
   {
@@ -23,44 +24,66 @@ const footerSections = [
   {
     title: 'Help',
     links: [
-      { name: 'Contact', href: '/contact' },
-      { name: 'Delivery', href: '/shipping' },
-      { name: 'Returns', href: '/returns' },
-      { name: 'FAQ', href: '/faq' },
+      { name: 'Delivery', href: '/help#delivery' },
+      { name: 'Returns', href: '/help#returns' },
+      { name: 'Questions', href: '/help#faq' },
+      { name: 'Contact', href: '/help#contact' },
     ],
   },
 ];
 
-const socialLinks = [
-  { name: 'Instagram', href: '#' },
-  { name: 'Pinterest', href: '#' },
-  { name: 'TikTok', href: '#' },
-];
+/** The weekly letter: a demo, so it thanks you and keeps nothing. */
+const Newsletter = () => {
+  const [sent, setSent] = useState(false);
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      {sent ? (
+        <motion.p
+          key="sent"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 max-w-md border-b border-foreground py-4 text-[17px]"
+          role="status"
+        >
+          Merci. The first letter arrives Thursday, with the new bakes.
+        </motion.p>
+      ) : (
+        <motion.form
+          key="form"
+          exit={{ opacity: 0, y: -10 }}
+          className="mt-8 flex max-w-md border-b border-foreground"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setSent(true);
+          }}
+        >
+          <label htmlFor="footer-email" className="sr-only">Email address</label>
+          <input
+            id="footer-email"
+            type="email"
+            required
+            placeholder="Your email"
+            className="flex-1 bg-transparent py-4 text-[17px] placeholder:text-foreground/45 focus:outline-none"
+          />
+          <button type="submit" className="group grid place-items-center w-12" aria-label="Subscribe">
+            <ArrowRight className="w-5 h-5 transition-transform duration-500 ease-silk group-hover:translate-x-1" strokeWidth={1.5} />
+          </button>
+        </motion.form>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const Footer = () => (
   <footer className="paper border-t border-foreground overflow-hidden">
     <div className="px-4 sm:px-6 lg:px-10 pt-20">
       <div className="grid grid-cols-12 gap-x-6 gap-y-12">
-        <div className="col-span-12 lg:col-span-5">
+        <div className="col-span-12 lg:col-span-4">
           <p className="label opacity-60">The morning letter</p>
           <p className="mt-4 display text-[2.6rem] leading-[0.95] max-w-md">
             New bakes, first. <span className="display-italic">Once a week.</span>
           </p>
-          <form
-            className="mt-8 flex max-w-md border-b border-foreground"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <label htmlFor="footer-email" className="sr-only">Email address</label>
-            <input
-              id="footer-email"
-              type="email"
-              placeholder="Your email"
-              className="flex-1 bg-transparent py-4 text-[17px] placeholder:text-foreground/45 focus:outline-none"
-            />
-            <button type="submit" className="grid place-items-center w-12" aria-label="Subscribe">
-              <ArrowRight className="w-5 h-5" strokeWidth={1.5} />
-            </button>
-          </form>
+          <Newsletter />
         </div>
 
         {footerSections.map((section) => (
@@ -78,7 +101,7 @@ const Footer = () => (
           </div>
         ))}
 
-        <div className="col-span-6 sm:col-span-4 lg:col-span-1">
+        <div className="col-span-6 sm:col-span-4 lg:col-span-2">
           <p className="label opacity-60">Visit</p>
           <address className="mt-5 not-italic text-[15px] leading-relaxed">
             123 Rue de la Paix<br />Paris 75001<br />7 am – 7 pm
@@ -88,11 +111,14 @@ const Footer = () => (
 
       <div className="mt-16 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-foreground/30 pt-6 label text-[10px]">
         <span className="opacity-60">© 2026 Maison Dorée · A concept by Priyanshu Burman</span>
-        <span className="flex gap-6">
-          {socialLinks.map((s) => (
-            <a key={s.name} href={s.href} className="link-animated">{s.name}</a>
-          ))}
-        </span>
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="group inline-flex items-center gap-2 uppercase self-start sm:self-auto"
+        >
+          <span className="link-animated">Back to top</span>
+          <ArrowUp className="w-3.5 h-3.5 transition-transform duration-500 ease-silk group-hover:-translate-y-0.5" />
+        </button>
       </div>
     </div>
 
