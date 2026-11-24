@@ -19,7 +19,7 @@ type FieldProps = {
 /** A labelled field: small capitals over a round, ink-ruled input. */
 const Field = ({ label, name, className = '', hint, ...input }: FieldProps) => (
   <label className={`block ${className}`}>
-    <span className="label text-[10px] opacity-70">{label}</span>
+    <span className="label">{label}</span>
     <input
       name={name}
       className="mt-2 w-full h-14 px-5 rounded-2xl bg-card border border-foreground/25 text-[16px] placeholder:text-foreground/35 focus:border-foreground focus:outline-none transition-colors duration-300"
@@ -38,8 +38,8 @@ const Step = ({ n, title, children }: { n: string; title: string; children: Reac
     className="grid grid-cols-12 gap-x-6 gap-y-6 border-t border-foreground pt-8 pb-12"
   >
     <div className="col-span-12 md:col-span-3 flex md:block items-baseline gap-4">
-      <p className="label opacity-60">{n}</p>
-      <h2 id={`step-${n}`} className="display text-[2.2rem] md:mt-3">
+      <p className="display text-[2.2rem] leading-none text-muted-foreground tabular">{n}</p>
+      <h2 id={`step-${n}`} className="display text-[2.2rem] md:mt-2">
         {title}
       </h2>
     </div>
@@ -104,32 +104,30 @@ const Checkout = () => {
   return (
     <div className="overflow-x-clip">
       <PageHead
-        kicker="Checkout"
-        aside={
-          <Link to="/cart" className="group inline-flex items-center gap-2">
+        title="Checkout"
+        note={
+          <Link to="/cart" className="group inline-flex items-center gap-2 text-foreground">
             <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-500 ease-silk group-hover:-translate-x-1" />
             <span className="link-animated">Back to your box</span>
           </Link>
         }
-        title="Almost"
-        italic="yours."
       />
 
       <form onSubmit={handleSubmit} className="px-4 sm:px-6 lg:px-10 pt-10 pb-32 grid grid-cols-12 gap-x-10 gap-y-12 items-start">
         <div className="col-span-12 lg:col-span-8">
-          <Step n="01" title="You">
+          <Step n="1" title="Your details">
             <Field label="First name" name="firstName" value={form.firstName} onChange={onChange} autoComplete="given-name" required className="col-span-2 sm:col-span-1" />
             <Field label="Last name" name="lastName" value={form.lastName} onChange={onChange} autoComplete="family-name" required className="col-span-2 sm:col-span-1" />
             <Field label="Email" name="email" type="email" value={form.email} onChange={onChange} autoComplete="email" required className="col-span-2 sm:col-span-1" hint="For your receipt, nothing else." />
             <Field label="Phone" name="phone" type="tel" value={form.phone} onChange={onChange} autoComplete="tel" required className="col-span-2 sm:col-span-1" hint="The driver rings when they're outside." />
           </Step>
 
-          <Step n="02" title="Where">
+          <Step n="2" title="Delivery">
             <Field label="Street address" name="address" value={form.address} onChange={onChange} autoComplete="street-address" required className="col-span-2" />
             <Field label="City" name="city" value={form.city} onChange={onChange} autoComplete="address-level2" required className="col-span-2 sm:col-span-1" />
             <Field label="Postal code" name="postalCode" value={form.postalCode} onChange={onChange} autoComplete="postal-code" required className="col-span-2 sm:col-span-1" />
             <label className="block col-span-2">
-              <span className="label text-[10px] opacity-70">A note for us (optional)</span>
+              <span className="label">A note for us (optional)</span>
               <textarea
                 name="notes"
                 value={form.notes}
@@ -141,7 +139,7 @@ const Checkout = () => {
             </label>
           </Step>
 
-          <Step n="03" title="Pay">
+          <Step n="3" title="Payment">
             <p className="col-span-2 rounded-2xl bg-secondary border border-foreground px-5 py-4 text-sm leading-relaxed">
               <span className="font-semibold">This is a demo shop.</span> No card is charged. Use 4242 4242 4242 4242,
               any future date and any three digits.
@@ -157,8 +155,8 @@ const Checkout = () => {
         <aside className="col-span-12 lg:col-span-4 lg:sticky lg:top-28">
           <div className="rounded-[1.75rem] border border-foreground bg-card p-7 sm:p-8">
             <div className="flex items-baseline justify-between">
-              <p className="label">The ticket</p>
-              <p className="label opacity-60">
+              <h2 className="display text-[1.9rem]">Summary</h2>
+              <p className="label text-muted-foreground">
                 {itemCount} {itemCount === 1 ? 'piece' : 'pieces'}
               </p>
             </div>
@@ -190,11 +188,15 @@ const Checkout = () => {
             </dl>
 
             <div className="mt-6 pt-6 border-t border-foreground flex items-baseline justify-between gap-4">
-              <span className="label">Total</span>
+              <span className="text-[15px] font-semibold">Total</span>
               <span className="display text-[3rem] tabular leading-none">{formatPrice(grandTotal)}</span>
             </div>
 
-            <button type="submit" disabled={isSubmitting} className="btn-ink w-full mt-8 disabled:opacity-80 disabled:cursor-wait">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`btn-ink w-full mt-8 disabled:opacity-80 disabled:cursor-wait ${isSubmitting ? '' : '!justify-between'}`}
+            >
               {isSubmitting ? (
                 <>
                   <span className="w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin" aria-hidden />
@@ -202,7 +204,8 @@ const Checkout = () => {
                 </>
               ) : (
                 <>
-                  Place order <span className="opacity-50">·</span> <span className="tabular">{formatPrice(grandTotal)}</span>
+                  <span>Place order</span>
+                  <span className="tabular font-medium">{formatPrice(grandTotal)}</span>
                 </>
               )}
             </button>

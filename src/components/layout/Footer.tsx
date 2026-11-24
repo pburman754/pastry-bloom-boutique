@@ -79,16 +79,14 @@ const Footer = () => (
     <div className="px-4 sm:px-6 lg:px-10 pt-20">
       <div className="grid grid-cols-12 gap-x-6 gap-y-12">
         <div className="col-span-12 lg:col-span-4">
-          <p className="label opacity-60">The morning letter</p>
-          <p className="mt-4 display text-[2.6rem] leading-[0.95] max-w-md">
-            New bakes, first. <span className="display-italic">Once a week.</span>
-          </p>
+          <p className="display text-[2.6rem] leading-[0.95] max-w-md">New bakes, first, once a week.</p>
+          <p className="mt-3 text-[15px] text-muted-foreground max-w-sm">A short letter on Thursdays: what&rsquo;s new in the case and what&rsquo;s coming.</p>
           <Newsletter />
         </div>
 
         {footerSections.map((section) => (
           <div key={section.title} className="col-span-6 sm:col-span-4 lg:col-span-2">
-            <p className="label opacity-60">{section.title}</p>
+            <p className="label text-muted-foreground">{section.title}</p>
             <ul className="mt-5 space-y-3">
               {section.links.map((link) => (
                 <li key={link.name}>
@@ -102,19 +100,19 @@ const Footer = () => (
         ))}
 
         <div className="col-span-6 sm:col-span-4 lg:col-span-2">
-          <p className="label opacity-60">Visit</p>
+          <p className="label text-muted-foreground">Visit</p>
           <address className="mt-5 not-italic text-[15px] leading-relaxed">
             123 Rue de la Paix<br />Paris 75001<br />7 am – 7 pm
           </address>
         </div>
       </div>
 
-      <div className="mt-16 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-foreground/30 pt-6 label text-[10px]">
-        <span className="opacity-60">© 2026 Maison Dorée · A concept by Priyanshu Burman</span>
+      <div className="mt-16 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-foreground/30 pt-6 label">
+        <span className="text-muted-foreground">© 2026 Maison Dorée, a concept shop designed and built by Priyanshu Burman</span>
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="group inline-flex items-center gap-2 uppercase self-start sm:self-auto"
+          className="group inline-flex items-center gap-2 self-start sm:self-auto"
         >
           <span className="link-animated">Back to top</span>
           <ArrowUp className="w-3.5 h-3.5 transition-transform duration-500 ease-silk group-hover:-translate-y-0.5" />

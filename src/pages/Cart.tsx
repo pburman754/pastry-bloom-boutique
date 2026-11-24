@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
+import { categories } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
 import { usePageTitle } from '@/hooks/use-page-title';
 import PageHead from '@/components/layout/PageHead';
@@ -27,7 +27,7 @@ const Cart = () => {
   if (items.length === 0) {
     return (
       <div className="overflow-x-clip">
-        <PageHead kicker="Your box" aside="0 pieces" title="Nothing here" italic="yet." />
+        <PageHead title="Your box is empty" />
         <section className="px-4 sm:px-6 lg:px-10 pt-14 pb-32 grid grid-cols-12 gap-x-6 gap-y-12 items-end">
           <div className="col-span-12 md:col-span-6 lg:col-span-5">
             <p className="text-[19px] leading-relaxed max-w-md">
@@ -35,7 +35,7 @@ const Cart = () => {
               day.
             </p>
             <Link to="/shop" className="btn-ink mt-10">
-              Fill your box <ArrowRight className="w-4 h-4" />
+              Fill your box
             </Link>
           </div>
           <div className="col-span-8 col-start-3 md:col-span-4 md:col-start-9 arch aspect-[3/4] border border-foreground">
@@ -48,12 +48,7 @@ const Cart = () => {
 
   return (
     <div className="overflow-x-clip">
-      <PageHead
-        kicker="Your box"
-        aside={`${itemCount} ${itemCount === 1 ? 'piece' : 'pieces'}`}
-        title="Your"
-        italic="box."
-      />
+      <PageHead title="Your box" note={`${itemCount} ${itemCount === 1 ? 'piece' : 'pieces'}`} />
 
       <section className="px-4 sm:px-6 lg:px-10 pt-4 pb-32 grid grid-cols-12 gap-x-10 gap-y-14 items-start">
         {/* The pieces */}
@@ -75,7 +70,7 @@ const Cart = () => {
                   </Link>
 
                   <div className="min-w-0">
-                    <p className="label text-[10px] opacity-60">{item.category}</p>
+                    <p className="text-[14px] text-muted-foreground">{categories.find((c) => c.id === item.category)?.name ?? item.category}</p>
                     <h2 className="mt-2 display text-[1.9rem] sm:text-[2.4rem] leading-[0.95]">
                       <Link to={`/product/${item.id}`} className="hover:opacity-70 transition-opacity">
                         {item.name}
@@ -96,7 +91,7 @@ const Cart = () => {
                       <button
                         type="button"
                         onClick={() => remove(item.id, item.name)}
-                        className="mt-1 label text-[10px] opacity-60 hover:opacity-100 link-animated"
+                        className="mt-1 label opacity-60 hover:opacity-100 link-animated"
                       >
                         Remove
                       </button>
@@ -108,9 +103,8 @@ const Cart = () => {
           </ul>
 
           <div className="mt-8 flex items-center justify-between gap-4 label">
-            <Link to="/shop" className="group inline-flex items-center gap-2">
-              <span className="link-animated">Keep browsing</span>
-              <ArrowRight className="w-3.5 h-3.5 transition-transform duration-500 ease-silk group-hover:translate-x-1" />
+            <Link to="/shop" className="link-animated">
+              Keep browsing
             </Link>
             <button type="button" onClick={clearCart} className="uppercase opacity-60 hover:opacity-100 link-animated">
               Empty the box
@@ -121,7 +115,7 @@ const Cart = () => {
         {/* The ticket */}
         <aside className="col-span-12 lg:col-span-4 lg:sticky lg:top-28">
           <div className="rounded-[1.75rem] border border-foreground bg-card p-7 sm:p-8">
-            <p className="label">The ticket</p>
+            <h2 className="display text-[1.9rem]">Summary</h2>
 
             <dl className="mt-7 space-y-3 text-[15px]">
               <div className="flex justify-between gap-4">
@@ -156,12 +150,12 @@ const Cart = () => {
             </div>
 
             <div className="mt-7 pt-6 border-t border-foreground flex items-baseline justify-between gap-4">
-              <span className="label">Total</span>
+              <span className="text-[15px] font-semibold">Total</span>
               <span className="display text-[3rem] tabular leading-none">{formatPrice(total + delivery)}</span>
             </div>
 
             <Link to="/checkout" className="btn-ink w-full mt-8">
-              Checkout <ArrowRight className="w-4 h-4" />
+              Go to checkout
             </Link>
             <p className="mt-5 text-center text-sm text-muted-foreground">Order by 2 pm for delivery today.</p>
           </div>

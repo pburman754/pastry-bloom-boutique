@@ -1,34 +1,29 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
-import { Product } from '@/data/mockData';
+import { Link } from 'react-router-dom';
+import { categories, Product } from '@/data/mockData';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
-import { Link } from 'react-router-dom';
+import { formatPrice } from '@/lib/shop';
 
 interface ProductCardProps {
   product: Product;
-  index?: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
+/** A bake in the case: arched window, its name, a line about it and the price. */
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addItem } = useCart();
   const { toast } = useToast();
+  const shelf = categories.find((c) => c.id === product.category)?.name ?? product.category;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addItem(product);
-    toast({ title: 'In your box', description: `${product.name}, $${product.price.toFixed(2)}.` });
+    toast({ title: 'In your box', description: `${product.name}, ${formatPrice(product.price)}.` });
   };
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 1, delay: (index % 3) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group"
-    >
+    <article className="group">
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative">
           <div className="arch aspect-[4/5] bg-muted border border-foreground">
@@ -36,13 +31,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
               src={product.image}
               alt={product.name}
               loading="lazy"
-              className="w-full h-full object-cover transition-transform duration-[1600ms] ease-silk group-hover:scale-[1.07]"
+              className="w-full h-full object-cover transition-transform duration-[1600ms] ease-silk group-hover:scale-[1.06]"
             />
           </div>
 
           {product.isNew && (
-            <span className="absolute top-6 left-1/2 -translate-x-1/2 label text-[10px] bg-[hsl(var(--berry))] text-white rounded-full px-3 py-1">
-              New
+            <span className="absolute top-7 left-1/2 -translate-x-1/2 rounded-full bg-[hsl(var(--berry))] text-white border border-foreground px-3.5 py-1 fr text-[15px]">
+              nouveau
             </span>
           )}
 
@@ -57,15 +52,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
         </div>
 
         <div className="pt-8 pr-20">
-          <p className="label text-[10px] opacity-60">
-            {String(index + 1).padStart(2, '0')} — {product.category}
-          </p>
-          <h3 className="mt-3 display text-[2rem] leading-[0.95]">{product.name}</h3>
-          <p className="mt-3 font-body text-sm leading-relaxed text-muted-foreground line-clamp-2">{product.description}</p>
-          <p className="mt-4 font-body text-lg font-semibold tabular">${product.price.toFixed(2)}</p>
+          <p className="text-[14px] text-muted-foreground">{shelf}</p>
+          <h3 className="mt-2 display text-[2rem] leading-[0.95]">{product.name}</h3>
+          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground line-clamp-2">{product.description}.</p>
+          <p className="mt-4 text-lg font-semibold tabular">{formatPrice(product.price)}</p>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 };
 

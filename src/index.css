@@ -130,14 +130,20 @@
     font-variation-settings: "SOFT" 100, "opsz" 144;
   }
 
-  /* Small capitals: labels, section numbers, corners */
+  /* Small text: captions, meta, quiet links. Sentence case, never tracked capitals. */
   .label {
-    @apply font-body text-[11px] font-semibold uppercase tracking-[0.22em];
+    @apply font-body text-[13px] leading-snug font-medium tracking-[-0.005em];
+  }
+
+  /* French words and asides, set the way type sets a foreign word: in italic */
+  .fr {
+    @apply font-display italic font-normal;
+    font-variation-settings: "SOFT" 100, "opsz" 36;
   }
 
   /* A butter dot before a label */
   .dot-label {
-    @apply inline-flex items-center gap-2.5 font-body text-[11px] font-semibold uppercase tracking-[0.22em];
+    @apply inline-flex items-center gap-2.5 font-body text-[13px] font-medium;
   }
   .dot-label::before {
     content: '';
@@ -156,7 +162,7 @@
   .btn-line,
   .btn-luxury,
   .btn-outline-luxury {
-    @apply relative inline-flex items-center justify-center gap-3 h-14 px-7 rounded-full font-body text-[13px] font-semibold uppercase tracking-[0.16em] overflow-hidden isolate border border-foreground transition-colors duration-300;
+    @apply relative inline-flex items-center justify-center gap-3 h-14 px-8 rounded-full font-body text-[15px] font-semibold tracking-[-0.01em] overflow-hidden isolate border border-foreground transition-colors duration-300;
   }
   .btn-ink, .btn-luxury { @apply bg-foreground text-background; }
   .btn-butter { @apply bg-accent text-foreground; }
@@ -211,6 +217,16 @@
   .ornament::after {
     content: '';
     @apply h-px w-16 bg-current;
+  }
+
+  /* The felt letter board by the till: cocoa felt with fine grooves for the letters */
+  .letter-board {
+    background-color: hsl(var(--foreground));
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 5px,
+      hsl(37 52% 92% / 0.035) 5px 6px
+    );
   }
 
   /* Endless ribbon */

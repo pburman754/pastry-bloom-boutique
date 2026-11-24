@@ -1,9 +1,7 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHead from '@/components/layout/PageHead';
-import { silk } from '@/components/motion/Rise';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { DELIVERY_FEE, FREE_DELIVERY_FROM, formatPrice } from '@/lib/shop';
 
@@ -26,21 +24,14 @@ const questions = [
   },
 ];
 
-const Section = ({ id, n, title, children }: { id: string; n: string; title: string; children: React.ReactNode }) => (
-  <motion.section
+const Section = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
+  <section
     id={id}
-    initial={{ opacity: 0, y: 24 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.2 }}
-    transition={{ duration: 0.9, ease: silk }}
     className="scroll-mt-28 grid grid-cols-12 gap-x-6 gap-y-6 border-b border-foreground py-12 lg:py-16"
   >
-    <div className="col-span-12 md:col-span-4 lg:col-span-5 flex md:block items-baseline gap-4">
-      <p className="label opacity-60">{n}</p>
-      <h2 className="display text-[2.8rem] sm:text-[3.6rem] md:mt-4">{title}</h2>
-    </div>
+    <h2 className="col-span-12 md:col-span-4 lg:col-span-5 display text-[2.8rem] sm:text-[3.6rem]">{title}</h2>
     <div className="col-span-12 md:col-span-8 lg:col-span-7 text-[17px] leading-relaxed">{children}</div>
-  </motion.section>
+  </section>
 );
 
 const Help = () => {
@@ -48,34 +39,34 @@ const Help = () => {
 
   return (
     <div className="overflow-x-clip">
-      <PageHead kicker="Help" aside="Delivery · Returns · Questions" title="Good to" italic="know." />
+      <PageHead title="Help" note="Delivery, returns and the questions people ask most" />
 
       <div className="px-4 sm:px-6 lg:px-10 pb-32">
-        <Section id="delivery" n="01" title="Delivery">
+        <Section id="delivery" title="Delivery">
           <p>
             Order before 2 pm and your box leaves the shop the same day, anywhere in Paris. Order in the evening and it
             arrives by noon the next morning, baked that dawn.
           </p>
           <dl className="mt-8 grid sm:grid-cols-2 border-t border-foreground/30">
             <div className="pt-5 sm:pr-6">
-              <dt className="label opacity-60">From {formatPrice(FREE_DELIVERY_FROM)}</dt>
+              <dt className="label text-muted-foreground">From {formatPrice(FREE_DELIVERY_FROM)}</dt>
               <dd className="mt-2 display text-[2.4rem]">Free</dd>
             </div>
             <div className="pt-5">
-              <dt className="label opacity-60">Below that</dt>
+              <dt className="label text-muted-foreground">Below that</dt>
               <dd className="mt-2 display text-[2.4rem] tabular">{formatPrice(DELIVERY_FEE)}</dd>
             </div>
           </dl>
         </Section>
 
-        <Section id="returns" n="02" title="Returns">
+        <Section id="returns" title="Returns">
           <p>
             Pastry can&rsquo;t come back to the shop. If something arrives damaged or isn&rsquo;t what you ordered, tell
             us the same day and we&rsquo;ll bake it again or refund it in full.
           </p>
         </Section>
 
-        <Section id="faq" n="03" title="Questions">
+        <Section id="faq" title="Questions">
           <ul className="border-t border-foreground/30">
             {questions.map((item) => (
               <li key={item.q} className="border-b border-foreground/30">
@@ -93,7 +84,7 @@ const Help = () => {
           </ul>
         </Section>
 
-        <Section id="contact" n="04" title="Contact">
+        <Section id="contact" title="Contact">
           <p>
             Maison Dorée is a concept shop, designed and built by Priyanshu Burman. No real orders are baked or charged,
             so feel free to try every part of it, checkout included.

@@ -75,12 +75,7 @@ const Shop = () => {
 
   return (
     <div className="overflow-x-clip">
-      <PageHead
-        kicker="Shop"
-        aside={`${products.length} creations, baked daily`}
-        title="The whole"
-        italic="case."
-      >
+      <PageHead title="The case" note={`${products.length} bakes, all made this morning`}>
         {/* Shelves, then search and sort */}
         <div className="flex flex-col xl:flex-row xl:items-center gap-5 xl:gap-10 py-5">
           <nav aria-label="Shelves" className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto no-scrollbar">
@@ -105,7 +100,7 @@ const Shop = () => {
                         />
                       )}
                       <span className="relative">{s.label}</span>
-                      <span className="relative label text-[10px] tracking-[0.12em] opacity-60 tabular">{counts[s.id] ?? 0}</span>
+                      <span className="relative text-[13px] opacity-60 tabular">{counts[s.id] ?? 0}</span>
                     </button>
                   </li>
                 );
@@ -151,7 +146,7 @@ const Shop = () => {
             {shown.length === products.length ? 'Showing everything' : `Showing ${shown.length} of ${products.length}`}
           </span>
           {(shelf !== 'all' || query) && (
-            <button type="button" onClick={clearAll} className="inline-flex items-center gap-1.5 uppercase hover:opacity-100">
+            <button type="button" onClick={clearAll} className="inline-flex items-center gap-1.5 hover:opacity-100">
               <X className="w-3.5 h-3.5" /> <span className="link-animated">Clear</span>
             </button>
           )}
@@ -167,8 +162,8 @@ const Shop = () => {
               transition={{ duration: 0.45, ease: silk }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20"
             >
-              {shown.map((product, index) => (
-                <ProductCard key={product.id} product={product} index={index} />
+              {shown.map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
             </motion.div>
           ) : (
@@ -180,9 +175,7 @@ const Shop = () => {
               transition={{ duration: 0.5, ease: silk }}
               className="py-16 max-w-2xl"
             >
-              <p className="display text-[3.4rem] sm:text-[5rem]">
-                Nothing in the case <span className="display-italic">for that.</span>
-              </p>
+              <p className="display text-[3.4rem] sm:text-[5rem]">Nothing in the case for that.</p>
               <p className="mt-6 text-[17px] leading-relaxed text-muted-foreground">
                 {query ? `No bake matches “${query}”. ` : ''}Try another shelf, or see everything we baked this morning.
               </p>

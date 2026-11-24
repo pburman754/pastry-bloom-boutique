@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Rise, silk } from '@/components/motion/Rise';
 import { usePageTitle } from '@/hooks/use-page-title';
@@ -25,20 +24,14 @@ const OrderSuccess = () => {
   return (
     <div className="overflow-x-clip">
       <section className="bg-accent border-b border-foreground px-4 sm:px-6 lg:px-10 pt-10 pb-28">
-        <div className="flex justify-between label opacity-70">
-          <span>Order confirmed</span>
-          {order && <span className="tabular">{order.id}</span>}
-        </div>
-
-        <div className="mt-8 grid grid-cols-12 gap-x-10 gap-y-14 items-start">
+        <div className="mt-4 grid grid-cols-12 gap-x-10 gap-y-14 items-start">
           <div className="col-span-12 lg:col-span-7">
             <h1 className="display text-[19vw] sm:text-[13vw] lg:text-[10rem] leading-[0.84]">
-              <Rise delay={0.05}>Merci{order?.firstName ? ',' : '.'}</Rise>
-              {order?.firstName && (
-                <Rise delay={0.18}>
-                  <span className="display-italic">{order.firstName}.</span>
-                </Rise>
-              )}
+              <Rise delay={0.05}>
+                <span className="display-italic">Merci</span>
+                {order?.firstName ? ',' : '.'}
+              </Rise>
+              {order?.firstName && <Rise delay={0.18}>{order.firstName}.</Rise>}
             </h1>
             <motion.p
               initial={{ opacity: 0, y: 14 }}
@@ -46,8 +39,8 @@ const OrderSuccess = () => {
               transition={{ duration: 1, delay: 0.5, ease: silk }}
               className="mt-10 max-w-md text-[19px] leading-relaxed"
             >
-              Your box is with our bakers. We&rsquo;ll text you when it leaves the shop
-              {order?.city ? ` for ${order.city}` : ''}.
+              {order ? `Order ${order.id} is confirmed. ` : ''}Your box is with our bakers, and we&rsquo;ll text you
+              when it leaves the shop{order?.city ? ` for ${order.city}` : ''}.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 14 }}
@@ -56,7 +49,7 @@ const OrderSuccess = () => {
               className="mt-10 flex flex-wrap gap-3"
             >
               <Link to="/shop" className="btn-ink">
-                Back to the case <ArrowRight className="w-4 h-4" />
+                Back to the case
               </Link>
               <Link to="/" className="btn-line">
                 Home
@@ -77,12 +70,12 @@ const OrderSuccess = () => {
                   <p className="display text-[2rem] leading-none">
                     Maison <span className="display-italic">Dorée</span>
                   </p>
-                  <p className="label text-[9px] tracking-[0.36em] mt-2 opacity-60">Rue de la Paix · Paris 1er</p>
+                  <p className="fr text-[15px] mt-1.5 opacity-70">Rue de la Paix, Paris</p>
                 </div>
 
-                <div className="mt-7 flex justify-between label text-[10px] opacity-70 tabular">
+                <div className="mt-7 flex justify-between label opacity-70 tabular">
                   <span>{order.id}</span>
-                  <span>Today · {placedAt}</span>
+                  <span>Today, {placedAt}</span>
                 </div>
 
                 <ul className="mt-5 border-y border-dashed border-foreground/50 py-5 space-y-3">
@@ -126,9 +119,9 @@ const OrderSuccess = () => {
               >
                 <span className="absolute inset-1.5 rounded-full border border-[hsl(var(--berry))]" />
                 <span className="text-center">
-                  <span className="block label text-[9px] tracking-[0.3em]">Maison Dorée</span>
+                  <span className="block text-[9px] font-semibold uppercase tracking-[0.3em]">Maison Dorée</span>
                   <span className="block display-italic text-[2rem] leading-none my-1">Payé</span>
-                  <span className="block label text-[9px] tracking-[0.3em] tabular">{placedAt}</span>
+                  <span className="block text-[9px] font-semibold uppercase tracking-[0.3em] tabular">{placedAt}</span>
                 </span>
               </motion.div>
             </motion.div>

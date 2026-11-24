@@ -10,7 +10,7 @@ const navigationItems = [
   { name: 'Shop', path: '/shop' },
   { name: 'Cakes', path: '/shop?category=cakes' },
   { name: 'Our story', path: '/#story' },
-  { name: 'Reviews', path: '/#reviews' },
+  { name: 'Help', path: '/help' },
 ];
 
 const Header = () => {
@@ -90,7 +90,7 @@ const Header = () => {
             <span className="block display text-[1.85rem] sm:text-[2.1rem] tracking-[-0.04em]">
               Maison <span className="display-italic">Dorée</span>
             </span>
-            <span className="hidden sm:block label text-[9px] tracking-[0.42em] mt-1.5 opacity-60">Pâtisserie · Paris · 1892</span>
+            <span className="hidden sm:block fr text-[14px] mt-1 opacity-70">fondée en 1892</span>
           </Link>
 
           {/* Right: search, bag, order */}
@@ -125,8 +125,8 @@ const Header = () => {
                 )}
               </AnimatePresence>
             </button>
-            <Link to="/shop" className="hidden md:inline-flex btn-butter !h-11 !px-5 !text-[11px]">
-              Order
+            <Link to="/shop" className="hidden md:inline-flex btn-butter !h-11 !px-6 !text-[14px]">
+              Order today
             </Link>
           </div>
         </div>
@@ -151,9 +151,8 @@ const Header = () => {
                   transition={{ delay: 0.12 + index * 0.05, duration: 0.7, ease: silk }}
                   className="border-b border-foreground/20"
                 >
-                  <Link to={item.path} className="flex items-baseline justify-between py-4">
+                  <Link to={item.path} className="block py-4">
                     <span className="display text-[3.25rem]">{item.name}</span>
-                    <span className="label opacity-60 tabular">0{index + 1}</span>
                   </Link>
                 </motion.li>
               ))}
