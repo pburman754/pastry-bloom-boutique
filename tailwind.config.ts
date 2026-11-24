@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        'display': ['"Cormorant Garamond"', 'ui-serif', 'Georgia', 'serif'],
-        'body': ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'display': ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+        'body': ['"Inter Tight"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -103,6 +103,10 @@ export default {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" }
         },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" }
+        },
         "scroll-cue": {
           "0%": { transform: "translateY(-100%)" },
           "60%, 100%": { transform: "translateY(220%)" }
@@ -118,6 +122,7 @@ export default {
         "shimmer": "shimmer 2s infinite",
         "float": "float 3s ease-in-out infinite",
         "marquee": "marquee 38s linear infinite",
+        "spin-slow": "spin-slow 24s linear infinite",
         "scroll-cue": "scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite",
       },
       transitionTimingFunction: {

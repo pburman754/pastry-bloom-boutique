@@ -23,10 +23,10 @@ const Rating = ({ value, size = 'sm', className }: RatingProps) => {
         const fill = Math.max(0, Math.min(1, value - i));
         return (
           <span key={i} className={cn('relative inline-block', dim)}>
-            <Star className={cn('absolute inset-0 text-accent/30', dim)} />
+            <Star className={cn('absolute inset-0 text-foreground/25', dim)} />
             {fill > 0 && (
               <span className="absolute inset-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-                <Star className={cn('text-accent fill-accent', dim)} />
+                <Star className={cn('text-foreground fill-foreground', dim)} />
               </span>
             )}
           </span>

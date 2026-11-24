@@ -2,58 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Maison Dorée design system: "Patisserie Editorial".
-   Ivory paper, espresso ink and one antique gold, set in Cormorant Garamond (display) and
-   Manrope (text). Gold that carries text is a deep, readable bronze; the brighter champagne
-   gold is kept for ornament only. */
+/* Maison Dorée: "Boulangerie poster".
+   Cream paper, cocoa ink and one loud butter yellow used as a fill, never as text.
+   Fraunces (soft, high-optical-size serif) carries the voice; Inter Tight does the small
+   capitals, prices and labels. Shapes come from the shop itself: arched windows and
+   round stamps. No gradients, no glass, no glow. */
 
 @layer base {
   :root {
-    --background: 40 45% 97%; /* Ivory #FBF8F2 */
-    --foreground: 22 35% 11%; /* Espresso #251810 */
+    --background: 37 52% 92%; /* Cream  #F4ECDF */
+    --foreground: 20 45% 9%; /* Cocoa  #22140D */
 
-    --card: 0 0% 100%;
-    --card-foreground: 22 35% 11%;
+    --card: 40 56% 96%; /* Paper  #FBF7F0 */
+    --card-foreground: 20 45% 9%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 22 35% 11%;
+    --popover: 40 56% 96%;
+    --popover-foreground: 20 45% 9%;
 
-    /* Primary: espresso */
-    --primary: 22 34% 16%;
-    --primary-foreground: 40 45% 97%;
+    --primary: 20 45% 11%; /* Cocoa ink */
+    --primary-foreground: 37 52% 92%;
 
-    /* Secondary: sugared blush */
-    --secondary: 18 45% 94%;
-    --secondary-foreground: 22 35% 11%;
+    --secondary: 43 82% 83%; /* Butter cream #F7E3B0 */
+    --secondary-foreground: 20 45% 9%;
 
-    /* Muted: parchment */
-    --muted: 38 36% 93%;
-    --muted-foreground: 24 12% 36%;
+    --muted: 38 40% 86%; /* Flour #EADFCC */
+    --muted-foreground: 24 22% 32%;
 
-    /* Accent: antique bronze-gold, dark enough for text on ivory */
-    --accent: 34 55% 37%;
-    --accent-foreground: 40 45% 97%;
+    /* Butter: the brand fill. Cocoa text sits on it. */
+    --accent: 42 86% 61%; /* #F1BE48 */
+    --accent-foreground: 20 45% 9%;
 
-    /* Ornamental champagne gold (borders, rules, glints; never body text) */
-    --gold: 38 58% 58%;
-    --gold-soft: 40 60% 82%;
+    /* Raspberry, for "new" and the odd stamp */
+    --berry: 350 59% 47%;
 
-    --destructive: 0 62% 46%;
+    --destructive: 0 62% 44%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 32 28% 87%;
-    --input: 32 28% 85%;
-    --ring: 34 55% 37%;
+    --border: 36 33% 79%;
+    --input: 36 33% 76%;
+    --ring: 20 45% 11%;
 
-    --radius: 0.875rem;
+    --radius: 0.75rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(22 36% 13%), hsl(22 30% 21%));
-    --gradient-gold: linear-gradient(135deg, hsl(34 55% 40%), hsl(40 62% 60%));
-    --gradient-cream: linear-gradient(180deg, hsl(40 45% 97%), hsl(36 40% 93%));
+    /* Kept for pages that still name them: flat, not graded */
+    --gradient-primary: linear-gradient(hsl(20 45% 11%), hsl(20 45% 11%));
+    --gradient-gold: linear-gradient(hsl(42 86% 61%), hsl(42 86% 61%));
+    --gradient-cream: linear-gradient(hsl(37 52% 92%), hsl(37 52% 92%));
 
-    --shadow-luxury: 0 30px 60px -28px hsla(22, 40%, 15%, 0.35), 0 2px 6px -2px hsla(22, 40%, 15%, 0.08);
-    --shadow-card: 0 1px 2px hsla(22, 40%, 15%, 0.05), 0 12px 32px -18px hsla(22, 40%, 15%, 0.22);
-    --shadow-gold: 0 10px 30px -10px hsla(36, 60%, 40%, 0.45);
+    --shadow-luxury: 0 1px 0 hsl(20 45% 9% / 0.9);
+    --shadow-card: 0 0 0 1px hsl(36 33% 79%);
+    --shadow-gold: 0 0 0 1px hsl(20 45% 9%);
 
     --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
     --transition-luxury: all 0.5s var(--ease-silk);
@@ -61,27 +59,26 @@
   }
 
   .dark {
-    --background: 20 14% 8%;
-    --foreground: 30 15% 95%;
-    --card: 20 14% 12%;
-    --card-foreground: 30 15% 95%;
-    --popover: 20 14% 12%;
-    --popover-foreground: 30 15% 95%;
-    --primary: 38 58% 70%;
-    --primary-foreground: 20 14% 8%;
-    --secondary: 20 14% 15%;
-    --secondary-foreground: 30 15% 95%;
-    --muted: 20 14% 15%;
-    --muted-foreground: 30 8% 65%;
-    --accent: 40 62% 66%;
-    --accent-foreground: 20 14% 8%;
-    --gold: 40 62% 66%;
-    --gold-soft: 40 30% 30%;
-    --destructive: 0 75% 65%;
+    --background: 20 30% 8%;
+    --foreground: 37 52% 92%;
+    --card: 20 30% 11%;
+    --card-foreground: 37 52% 92%;
+    --popover: 20 30% 11%;
+    --popover-foreground: 37 52% 92%;
+    --primary: 42 86% 61%;
+    --primary-foreground: 20 45% 9%;
+    --secondary: 20 25% 16%;
+    --secondary-foreground: 37 52% 92%;
+    --muted: 20 25% 16%;
+    --muted-foreground: 37 20% 70%;
+    --accent: 42 86% 61%;
+    --accent-foreground: 20 45% 9%;
+    --berry: 350 65% 62%;
+    --destructive: 0 70% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 20 14% 20%;
-    --input: 20 14% 20%;
-    --ring: 38 58% 70%;
+    --border: 20 20% 22%;
+    --input: 20 20% 22%;
+    --ring: 42 86% 61%;
   }
 }
 
@@ -94,114 +91,147 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
   }
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    font-feature-settings: "ss01", "cv11";
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-semibold leading-[1.05] text-balance;
-    letter-spacing: -0.012em;
+    @apply font-display font-medium text-balance;
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+    letter-spacing: -0.02em;
+    line-height: 1;
   }
 
   ::selection {
-    background: hsl(var(--gold-soft));
+    background: hsl(var(--accent));
     color: hsl(var(--foreground));
   }
 
   :focus-visible {
-    outline: 2px solid hsl(var(--ring));
+    outline: 2px solid hsl(var(--foreground));
     outline-offset: 3px;
   }
 
-  /* Prices and quantities line up */
   .tabular { font-variant-numeric: tabular-nums lining-nums; }
 }
 
 @layer components {
-  /* Small capitals above a heading, set between two hairlines */
-  .eyebrow {
-    @apply inline-flex items-center gap-3 font-body text-[11px] font-semibold uppercase tracking-[0.32em] text-accent;
+  /* Display type: Fraunces at its largest optical size, soft and tight */
+  .display {
+    @apply font-display font-medium;
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+    letter-spacing: -0.045em;
+    line-height: 0.86;
   }
-  .eyebrow::before,
-  .eyebrow-both::after {
+  .display-italic {
+    @apply font-display italic font-light;
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+  }
+
+  /* Small capitals: labels, section numbers, corners */
+  .label {
+    @apply font-body text-[11px] font-semibold uppercase tracking-[0.22em];
+  }
+
+  /* A butter dot before a label */
+  .dot-label {
+    @apply inline-flex items-center gap-2.5 font-body text-[11px] font-semibold uppercase tracking-[0.22em];
+  }
+  .dot-label::before {
     content: '';
-    @apply block h-px w-8 bg-[hsl(var(--gold))];
+    @apply inline-block w-2 h-2 rounded-full bg-accent ring-1 ring-foreground;
   }
 
-  /* Section headings: big serif with an italic turn */
-  .display-xl { @apply font-display text-[3.25rem] sm:text-7xl lg:text-[6.25rem] font-semibold leading-[0.95] tracking-[-0.02em]; }
-  .display-lg { @apply font-display text-[2.75rem] lg:text-[4.25rem] font-semibold leading-[1] tracking-[-0.015em]; }
-  .italic-accent { @apply italic font-medium; }
+  /* Arched shop-window frame */
+  .arch {
+    border-radius: 999px 999px 1rem 1rem;
+    overflow: hidden;
+  }
 
-  /* Buttons: soft pills with an arrow that travels */
-  .btn-pill {
-    @apply inline-flex items-center justify-center gap-3 rounded-full bg-primary text-primary-foreground h-14 pl-8 pr-2 text-[15px] font-semibold tracking-wide shadow-luxury transition-[transform,background-color,box-shadow] duration-500 ease-silk hover:-translate-y-0.5 hover:bg-[hsl(22_34%_12%)] active:translate-y-0;
+  /* Buttons: flat, ink-outlined, with a butter fill that rises on hover */
+  .btn-ink,
+  .btn-butter,
+  .btn-line,
+  .btn-luxury,
+  .btn-outline-luxury {
+    @apply relative inline-flex items-center justify-center gap-3 h-14 px-7 rounded-full font-body text-[13px] font-semibold uppercase tracking-[0.16em] overflow-hidden isolate border border-foreground transition-colors duration-300;
   }
-  .btn-pill-light {
-    @apply inline-flex items-center justify-center gap-3 rounded-full bg-background text-foreground h-14 pl-8 pr-2 text-[15px] font-semibold tracking-wide shadow-luxury transition-[transform,background-color] duration-500 ease-silk hover:-translate-y-0.5 hover:bg-white active:translate-y-0;
+  .btn-ink, .btn-luxury { @apply bg-foreground text-background; }
+  .btn-butter { @apply bg-accent text-foreground; }
+  .btn-line, .btn-outline-luxury { @apply bg-transparent text-foreground; }
+  .btn-ink::before,
+  .btn-butter::before,
+  .btn-line::before,
+  .btn-luxury::before,
+  .btn-outline-luxury::before {
+    content: '';
+    @apply absolute inset-0 -z-10 translate-y-full transition-transform duration-500;
+    transition-timing-function: var(--ease-silk);
   }
-  .btn-pill-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full h-14 px-8 text-[15px] font-semibold tracking-wide border transition-colors duration-300;
-  }
-  .pill-arrow {
-    @apply grid place-items-center w-10 h-10 rounded-full bg-[hsl(var(--gold))] text-primary transition-transform duration-500 ease-silk;
-  }
-  .group:hover .pill-arrow { transform: translateX(3px) rotate(-45deg); }
+  .btn-ink::before, .btn-luxury::before { @apply bg-accent; }
+  .btn-butter::before { @apply bg-foreground; }
+  .btn-line::before, .btn-outline-luxury::before { @apply bg-foreground; }
+  .btn-ink:hover, .btn-luxury:hover { @apply text-foreground; }
+  .btn-butter:hover,
+  .btn-line:hover,
+  .btn-outline-luxury:hover { @apply text-background; }
+  .btn-ink:hover::before,
+  .btn-butter:hover::before,
+  .btn-line:hover::before,
+  .btn-luxury:hover::before,
+  .btn-outline-luxury:hover::before { @apply translate-y-0; }
+
 
   .card-luxury {
-    @apply bg-card rounded-2xl shadow-card transition-[transform,box-shadow] duration-500 ease-silk hover:-translate-y-1 hover:shadow-luxury;
+    @apply bg-card rounded-2xl border border-border transition-colors duration-300 hover:border-foreground;
   }
 
   .input-luxury {
-    @apply w-full px-4 py-3 bg-background border border-input rounded-xl focus:border-primary focus:outline-none transition-colors duration-300;
-  }
-
-  .btn-luxury {
-    @apply inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-3 rounded-full font-semibold shadow-luxury transition-all duration-500 ease-silk hover:-translate-y-0.5;
-  }
-  .btn-outline-luxury {
-    @apply inline-flex items-center justify-center border border-primary text-primary bg-transparent px-8 py-3 rounded-full font-semibold hover:bg-primary hover:text-primary-foreground transition-all duration-300;
+    @apply w-full px-4 py-3 bg-card border border-input rounded-xl focus:border-foreground focus:outline-none transition-colors duration-300;
   }
 
   .link-animated {
-    @apply relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-px after:-bottom-1 after:left-0 after:bg-[hsl(var(--gold))] after:origin-right after:transition-transform after:duration-500 after:ease-silk hover:after:scale-x-100 hover:after:origin-left;
+    @apply relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-px after:-bottom-0.5 after:left-0 after:bg-current after:origin-right after:transition-transform after:duration-500 hover:after:scale-x-100 hover:after:origin-left;
   }
 
   .product-hover {
-    @apply transition-all duration-500 ease-silk hover:-translate-y-1 hover:shadow-luxury;
+    @apply transition-transform duration-500 hover:-translate-y-1;
   }
 
-  .accent-gold { @apply text-accent font-semibold; }
-  .bg-gold-gradient { background: var(--gradient-gold); }
+  .accent-gold { @apply font-semibold underline decoration-accent decoration-[3px] underline-offset-4; }
+  .bg-gold-gradient { @apply bg-accent; }
 
-  /* A thin gold rule with a small diamond in the middle */
+  /* Hairline rule with a centred mark */
   .ornament {
-    @apply flex items-center justify-center gap-3 text-[hsl(var(--gold))];
+    @apply flex items-center justify-center gap-3 text-foreground;
   }
   .ornament::before,
   .ornament::after {
     content: '';
-    @apply h-px w-16 bg-current opacity-70;
+    @apply h-px w-16 bg-current;
   }
 
-  /* Film grain for dark, photographic sections */
-  .grain::after {
+  /* Endless ribbon */
+  .marquee-track { @apply flex w-max animate-marquee; }
+  .marquee-track:hover { animation-play-state: paused; }
+
+  /* Paper tooth: a very fine noise on cream sections */
+  .paper {
+    position: relative;
+    isolation: isolate;
+  }
+  .paper::after {
     content: '';
     position: absolute;
     inset: 0;
+    z-index: -1;
     pointer-events: none;
-    opacity: 0.08;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-
-  /* Endless ribbon of words */
-  .marquee-track { @apply flex w-max animate-marquee; }
-  .marquee-track:hover { animation-play-state: paused; }
 }
 
 @media (prefers-reduced-motion: reduce) {

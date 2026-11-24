@@ -1,202 +1,108 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { ArrowRight } from 'lucide-react';
 
-const Footer = () => {
-  const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-  ];
+const footerSections = [
+  {
+    title: 'Shop',
+    links: [
+      { name: 'Croissants', href: '/shop?category=croissants' },
+      { name: 'Macarons', href: '/shop?category=macarons' },
+      { name: 'Artisan breads', href: '/shop?category=breads' },
+      { name: 'Celebration cakes', href: '/shop?category=cakes' },
+    ],
+  },
+  {
+    title: 'House',
+    links: [
+      { name: 'Our story', href: '/#story' },
+      { name: 'Collections', href: '/#collections' },
+      { name: 'Reviews', href: '/#reviews' },
+    ],
+  },
+  {
+    title: 'Help',
+    links: [
+      { name: 'Contact', href: '/contact' },
+      { name: 'Delivery', href: '/shipping' },
+      { name: 'Returns', href: '/returns' },
+      { name: 'FAQ', href: '/faq' },
+    ],
+  },
+];
 
-  const footerSections = [
-    {
-      title: 'Products',
-      links: [
-        { name: 'Croissants', href: '/shop?category=croissants' },
-        { name: 'Macarons', href: '/shop?category=macarons' },
-        { name: 'Artisan Breads', href: '/shop?category=breads' },
-        { name: 'Luxury Cakes', href: '/shop?category=cakes' },
-      ]
-    },
-    {
-      title: 'Company',
-      links: [
-        { name: 'Our Story', href: '/#story' },
-        { name: 'Collections', href: '/#collections' },
-        { name: 'Reviews', href: '/#reviews' },
-        { name: 'Celebration Cakes', href: '/shop?category=cakes' },
-      ]
-    },
-    {
-      title: 'Support',
-      links: [
-        { name: 'Contact', href: '/contact' },
-        { name: 'FAQ', href: '/faq' },
-        { name: 'Shipping', href: '/shipping' },
-        { name: 'Returns', href: '/returns' },
-      ]
-    }
-  ];
+const socialLinks = [
+  { name: 'Instagram', href: '#' },
+  { name: 'Pinterest', href: '#' },
+  { name: 'TikTok', href: '#' },
+];
 
-  return (
-    <footer className="bg-gradient-cream border-t border-border">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          {/* Brand Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-4"
+const Footer = () => (
+  <footer className="paper border-t border-foreground overflow-hidden">
+    <div className="px-4 sm:px-6 lg:px-10 pt-20">
+      <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+        <div className="col-span-12 lg:col-span-5">
+          <p className="label opacity-60">The morning letter</p>
+          <p className="mt-4 display text-[2.6rem] leading-[0.95] max-w-md">
+            New bakes, first. <span className="display-italic">Once a week.</span>
+          </p>
+          <form
+            className="mt-8 flex max-w-md border-b border-foreground"
+            onSubmit={(e) => e.preventDefault()}
           >
-            <div className="flex items-center space-x-3">
-              <span className="grid place-items-center w-11 h-11 rounded-full border border-[hsl(var(--gold))] text-foreground">
-                <span className="font-display italic text-2xl leading-none -mt-0.5">M</span>
-              </span>
-              <div className="leading-none">
-                <h3 className="font-display text-[1.75rem] font-semibold text-foreground">
-                  Maison Dorée
-                </h3>
-                <p className="text-[9px] font-semibold uppercase tracking-[0.38em] text-muted-foreground mt-1.5">Pâtisserie · Paris</p>
-              </div>
-            </div>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Crafting exquisite pastries and artisan breads with passion and tradition since 1892. 
-              Every creation is a masterpiece of flavor and elegance.
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center space-x-2 text-muted-foreground">
-                <MapPin className="w-4 h-4" />
-                <span>123 Rue de la Paix, Paris 75001</span>
-              </div>
-              <div className="flex items-center space-x-2 text-muted-foreground">
-                <Phone className="w-4 h-4" />
-                <span>+33 1 42 60 82 14</span>
-              </div>
-              <div className="flex items-center space-x-2 text-muted-foreground">
-                <Mail className="w-4 h-4" />
-                <span>hello@maisondoree.fr</span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Links Sections */}
-          {footerSections.map((section, index) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="space-y-4"
-            >
-              <h4 className="font-display font-semibold text-foreground text-lg">
-                {section.title}
-              </h4>
-              <ul className="space-y-2">
-                {section.links.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-muted-foreground hover:text-primary transition-colors text-sm link-animated"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
+            <label htmlFor="footer-email" className="sr-only">Email address</label>
+            <input
+              id="footer-email"
+              type="email"
+              placeholder="Your email"
+              className="flex-1 bg-transparent py-4 text-[17px] placeholder:text-foreground/45 focus:outline-none"
+            />
+            <button type="submit" className="grid place-items-center w-12" aria-label="Subscribe">
+              <ArrowRight className="w-5 h-5" strokeWidth={1.5} />
+            </button>
+          </form>
         </div>
 
-        {/* Newsletter Subscription */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="border-t border-border pt-8 mb-8"
-        >
-          <div className="max-w-md mx-auto text-center">
-            <h4 className="font-display font-semibold text-foreground text-lg mb-2">
-              Stay Updated
-            </h4>
-            <p className="text-muted-foreground text-sm mb-4">
-              Subscribe to receive news about our latest creations and exclusive offers
-            </p>
-            <div className="flex space-x-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1"
-              />
-              <Button className="bg-gradient-luxury hover:shadow-luxury rounded-full">
-                Subscribe
-              </Button>
-            </div>
+        {footerSections.map((section) => (
+          <div key={section.title} className="col-span-6 sm:col-span-4 lg:col-span-2">
+            <p className="label opacity-60">{section.title}</p>
+            <ul className="mt-5 space-y-3">
+              {section.links.map((link) => (
+                <li key={link.name}>
+                  <Link to={link.href} className="link-animated text-[15px]">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-        </motion.div>
+        ))}
 
-        {/* Bottom Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="border-t border-border pt-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
-        >
-          {/* Copyright */}
-          <p className="text-muted-foreground text-sm">
-            © 2026 Maison Dorée. All rights reserved.
-          </p>
-
-          {/* Social Links */}
-          <div className="flex items-center space-x-4">
-            {socialLinks.map((social) => (
-              <Button
-                key={social.label}
-                variant="ghost"
-                size="sm"
-                asChild
-                className="hover:text-primary hover:bg-primary/10"
-              >
-                <a
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-5 h-5" />
-                </a>
-              </Button>
-            ))}
-          </div>
-
-          {/* Legal Links */}
-          <div className="flex items-center space-x-4 text-sm">
-            <Link
-              to="/privacy"
-              className="text-muted-foreground hover:text-primary transition-colors link-animated"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              to="/terms"
-              className="text-muted-foreground hover:text-primary transition-colors link-animated"
-            >
-              Terms of Service
-            </Link>
-          </div>
-        </motion.div>
+        <div className="col-span-6 sm:col-span-4 lg:col-span-1">
+          <p className="label opacity-60">Visit</p>
+          <address className="mt-5 not-italic text-[15px] leading-relaxed">
+            123 Rue de la Paix<br />Paris 75001<br />7 am – 7 pm
+          </address>
+        </div>
       </div>
-    </footer>
-  );
-};
+
+      <div className="mt-16 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-foreground/30 pt-6 label text-[10px]">
+        <span className="opacity-60">© 2026 Maison Dorée · A concept by Priyanshu Burman</span>
+        <span className="flex gap-6">
+          {socialLinks.map((s) => (
+            <a key={s.name} href={s.href} className="link-animated">{s.name}</a>
+          ))}
+        </span>
+      </div>
+    </div>
+
+    <p
+      aria-hidden
+      className="display text-[21vw] leading-[0.75] tracking-[-0.06em] whitespace-nowrap text-center translate-y-[18%] mt-10 select-none"
+    >
+      Maison <span className="display-italic">Dorée</span>
+    </p>
+  </footer>
+);
 
 export default Footer;

@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
-import { ArrowRight, ChefHat, Award, Truck, Clock } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { products, categories } from '@/data/mockData';
 import ProductCard from '@/components/products/ProductCard';
@@ -11,179 +11,213 @@ import storyImage from '@/assets/artisan-bread.jpg';
 
 const silk = [0.22, 1, 0.36, 1] as const;
 
-const reveal = {
-  initial: { opacity: 0, y: 28 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.25 },
-  transition: { duration: 0.9, ease: silk },
-};
-
-const promises = [
-  { icon: Clock, title: 'Baked at 5 AM', text: 'Every order leaves the oven the same morning.' },
-  { icon: Truck, title: 'Same-day delivery', text: 'Order by 2 PM, free over $50.' },
-  { icon: ChefHat, title: 'Bespoke cakes', text: 'Designed with our pastry chef for your day.' },
-  { icon: Award, title: 'Award-winning', text: 'Butter, flour and patience since 1892.' },
-];
-
 const testimonials = [
   {
-    quote: 'The croissants shatter exactly the way they do in Paris. Delivery arrived still warm, which I did not think was possible.',
+    quote: 'The croissants shatter exactly the way they do in Paris. Delivery arrived still warm.',
     name: 'Camille R.',
     detail: 'Classic Butter Croissant',
     rating: 5,
   },
   {
-    quote: 'They designed our wedding cake from a single photo and it was even better on the day. Guests are still talking about it.',
+    quote: 'They designed our wedding cake from a single photo, and it was even better on the day.',
     name: 'Arjun & Meera',
     detail: 'Celebration Cake, 3 tiers',
     rating: 5,
   },
   {
-    quote: 'Checkout took under a minute and the macaron box made the perfect last-minute gift. My new weekly ritual.',
+    quote: 'Checkout took under a minute. The macaron box is now my weekly ritual.',
     name: 'Hannah L.',
     detail: 'Rose Petal Macarons',
     rating: 4.8,
   },
 ];
 
-const ribbon = ['Croissants', 'Macarons', 'Celebration cakes', 'Sourdough', 'Petits fours', 'Viennoiseries'];
+const ribbon = ['Croissants', 'Macarons', 'Celebration cakes', 'Sourdough', 'Petits fours', 'Pain au chocolat'];
 
-/** One line of the hero headline, rising out of its own mask. */
-const Line = ({ children, delay, className = '' }: { children: React.ReactNode; delay: number; className?: string }) => (
-  <span className="block overflow-hidden pb-[0.08em]">
+/** A line of display type rising out of its own mask. */
+const Rise = ({
+  children,
+  delay = 0,
+  className = '',
+  onView = false,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+  onView?: boolean;
+}) => (
+  <span className={`block overflow-hidden ${className}`}>
     <motion.span
-      className={`block ${className}`}
-      initial={{ y: '110%' }}
-      animate={{ y: 0 }}
-      transition={{ duration: 1.15, delay, ease: silk }}
+      className="block"
+      initial={{ y: '105%' }}
+      {...(onView
+        ? { whileInView: { y: 0 }, viewport: { once: true, amount: 0.5 } }
+        : { animate: { y: 0 } })}
+      transition={{ duration: 1.3, delay, ease: silk }}
     >
       {children}
     </motion.span>
   </span>
 );
 
+/** The round stamp, its words set on a circle, turning slowly. */
+const Stamp = ({ className = '' }: { className?: string }) => (
+  <motion.div
+    initial={{ scale: 0, rotate: -90 }}
+    animate={{ scale: 1, rotate: 0 }}
+    transition={{ duration: 1.2, delay: 1.1, ease: silk }}
+    className={className}
+    aria-hidden
+  >
+    <div className="relative w-full h-full rounded-full bg-accent border border-foreground">
+      <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full animate-spin-slow">
+        <defs>
+          <path id="stamp-circle" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
+        </defs>
+        <text className="fill-current font-body" style={{ fontSize: 15, letterSpacing: '0.32em', fontWeight: 600 }}>
+          <textPath href="#stamp-circle">BAKED AT DAWN · DELIVERED BY NOON · </textPath>
+        </text>
+      </svg>
+      <span className="absolute inset-0 grid place-items-center display-italic text-[2.6rem]">M</span>
+    </div>
+  </motion.div>
+);
+
+const SectionHead = ({ number, title, italic, aside }: { number: string; title: string; italic: string; aside?: React.ReactNode }) => (
+  <div className="grid grid-cols-12 gap-x-6 items-end border-b border-foreground pb-8 mb-14">
+    <motion.p
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      className="col-span-12 md:col-span-2 label mb-4 md:mb-2"
+    >
+      {number}
+    </motion.p>
+    <h2 className="col-span-12 md:col-span-7 display text-[3.4rem] sm:text-[5rem] lg:text-[6.5rem]">
+      <span className="block overflow-hidden">
+        <motion.span
+          className="block"
+          initial={{ y: '105%' }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 1.1, ease: silk }}
+        >
+          {title} <span className="display-italic">{italic}</span>
+        </motion.span>
+      </span>
+    </h2>
+    {aside && <div className="col-span-12 md:col-span-3 md:text-right mt-6 md:mt-0">{aside}</div>}
+  </div>
+);
+
 const Stat = ({ value, suffix, label }: { value: number; suffix: string; label: string }) => {
   const { ref, value: shown } = useCountUp<HTMLSpanElement>(value);
   return (
-    <div>
-      <dt className="font-display text-5xl font-semibold text-foreground tabular">
+    <div className="border-t border-background/25 pt-5">
+      <dt className="display text-[4.5rem] text-accent tabular">
         <span ref={ref}>{shown}</span>
         {suffix}
       </dt>
-      <dd className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{label}</dd>
+      <dd className="label mt-3 opacity-70">{label}</dd>
     </div>
   );
 };
 
-const SectionHeading = ({ eyebrow, title, accent, align = 'left' }: { eyebrow: string; title: string; accent: string; align?: 'left' | 'center' }) => (
-  <motion.div {...reveal} className={align === 'center' ? 'text-center flex flex-col items-center' : ''}>
-    <p className={`eyebrow ${align === 'center' ? 'eyebrow-both' : ''} mb-5`}>{eyebrow}</p>
-    <h2 className="display-lg text-foreground">
-      {title} <span className="italic-accent text-accent">{accent}</span>
-    </h2>
-  </motion.div>
-);
-
 const Home = () => {
-  const featuredProducts = products.filter((product) => product.isFeatured);
   const reduce = useReducedMotion();
+  const featured = products.filter((p) => p.isFeatured);
+  const [hovered, setHovered] = useState(0);
 
   const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroImageY = useTransform(heroProgress, [0, 1], ['0%', reduce ? '0%' : '18%']);
-  const heroContentY = useTransform(heroProgress, [0, 1], ['0%', reduce ? '0%' : '-22%']);
-  const heroContentOpacity = useTransform(heroProgress, [0, 0.7], [1, 0]);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const leftX = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '-12%']);
+  const rightX = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '12%']);
+  const archY = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '-10%']);
 
   const storyRef = useRef<HTMLElement>(null);
   const { scrollYProgress: storyProgress } = useScroll({ target: storyRef, offset: ['start end', 'end start'] });
-  const storyImageY = useTransform(storyProgress, [0, 1], reduce ? ['0%', '0%'] : ['-7%', '7%']);
-  const years = useCountUp<HTMLSpanElement>(130);
+  const storyImageY = useTransform(storyProgress, [0, 1], reduce ? ['0%', '0%'] : ['-8%', '8%']);
 
   return (
-    <div className="min-h-screen">
-      {/* Hero */}
-      <section ref={heroRef} className="relative h-[100svh] min-h-[640px] flex items-end overflow-hidden bg-primary grain">
-        <motion.div style={{ y: heroImageY }} className="absolute inset-0 will-change-transform">
-          <motion.img
-            src={heroImage}
-            alt="Inside the Maison Dorée boutique"
-            initial={{ scale: 1.14 }}
-            animate={{ scale: 1.04 }}
-            transition={{ duration: 3.2, ease: silk }}
-            className="w-full h-full object-cover"
-          />
-        </motion.div>
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(22_40%_6%/0.55)_0%,hsl(22_40%_6%/0.25)_38%,hsl(22_40%_6%/0.82)_100%)]" />
+    <div className="overflow-x-clip">
+      {/* ---------- Hero ---------- */}
+      <section ref={heroRef} className="paper relative min-h-[calc(100svh-76px)] flex flex-col px-4 sm:px-6 lg:px-10 pt-6 pb-8">
+        <div className="flex justify-between label opacity-70">
+          <span>N°1 — Pâtisserie fine</span>
+          <span className="hidden sm:inline">Rue de la Paix, Paris 1er</span>
+        </div>
 
-        <motion.div
-          style={{ y: heroContentY, opacity: heroContentOpacity }}
-          className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pb-20 md:pb-24"
-        >
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.3, ease: silk }}
-            className="eyebrow !text-[hsl(var(--gold-soft))] mb-8"
-          >
-            Paris · Since 1892
-          </motion.p>
-
-          <h1 className="display-xl text-white max-w-5xl [text-shadow:0_2px_30px_rgba(20,10,4,0.35)]">
-            <Line delay={0.45}>Artisanal excellence,</Line>
-            <Line delay={0.6} className="italic font-medium text-[hsl(var(--gold-soft))]">in every bite.</Line>
+        <div className="relative flex-1 flex flex-col justify-center py-8">
+          <h1 className="display relative z-0 text-[22vw] lg:text-[19.5vw] leading-[0.8] select-none" aria-label="Maison Dorée">
+            <motion.span style={{ x: leftX }} className="block">
+              <Rise delay={0.15}>Maison</Rise>
+            </motion.span>
+            <motion.span style={{ x: rightX }} className="block text-right">
+              <Rise delay={0.3}>
+                <span className="display-italic">Dorée</span>
+              </Rise>
+            </motion.span>
           </h1>
 
-          <div className="mt-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10">
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1.05, ease: silk }}
-              className="max-w-md text-lg leading-relaxed text-white/80"
-            >
-              Viennoiseries laminated by hand, macarons piped to order and celebration cakes, baked at
-              dawn and at your door the same day.
-            </motion.p>
-
+          {/* The shop window, standing in front of the name */}
+          <div className="absolute z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[46vw] sm:w-[30vw] lg:w-[22vw]">
+          <motion.div style={{ y: archY }} className="relative">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1.2, ease: silk }}
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+              initial={{ clipPath: 'inset(100% 0 0 0 round 999px 999px 16px 16px)' }}
+              animate={{ clipPath: 'inset(0% 0 0 0 round 999px 999px 16px 16px)' }}
+              transition={{ duration: 1.4, delay: 0.5, ease: silk }}
+              className="arch aspect-[3/4] border border-foreground bg-muted"
             >
-              <Link to="/shop" className="group btn-pill-light">
-                Shop the collection
-                <span className="pill-arrow"><ArrowRight className="w-4 h-4" /></span>
-              </Link>
-              <Link to="/#story" className="btn-pill-ghost border-white/40 text-white hover:bg-white/10">
-                Our story
-              </Link>
+              <motion.img
+                src={heroImage}
+                alt="Inside the Maison Dorée shop on Rue de la Paix"
+                initial={{ scale: 1.35 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 2, delay: 0.5, ease: silk }}
+                className="w-full h-full object-cover"
+              />
             </motion.div>
+            <Stamp className="absolute -right-10 -bottom-10 sm:-right-14 sm:-bottom-12 w-28 h-28 sm:w-36 sm:h-36" />
+          </motion.div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.8 }}
-          className="absolute right-6 lg:right-10 bottom-24 hidden md:flex flex-col items-center gap-3 text-white/60"
-          aria-hidden
-        >
-          <span className="text-[10px] font-semibold uppercase tracking-[0.3em] [writing-mode:vertical-rl]">Scroll</span>
-          <span className="relative block w-px h-16 overflow-hidden bg-white/20">
-            <span className="absolute inset-x-0 top-0 h-1/2 bg-white animate-scroll-cue" />
-          </span>
-        </motion.div>
+        <div className="grid grid-cols-12 gap-6 items-end">
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1, ease: silk }}
+            className="col-span-12 md:col-span-5 lg:col-span-4 text-[17px] leading-relaxed"
+          >
+            Croissants laminated by hand, macarons piped to order and cakes built for your day. Baked at
+            dawn, at your door the same morning.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.15, ease: silk }}
+            className="col-span-12 md:col-span-7 lg:col-span-8 flex flex-wrap md:justify-end gap-3"
+          >
+            <Link to="/shop" className="btn-ink">
+              Shop the collection <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link to="/shop?category=cakes" className="btn-line">
+              Design a cake
+            </Link>
+          </motion.div>
+        </div>
       </section>
 
-      {/* Ribbon */}
-      <section aria-label="What we bake" className="bg-primary text-primary-foreground border-t border-white/10 overflow-hidden py-5">
+      {/* ---------- Ribbon ---------- */}
+      <section aria-label="What we bake" className="bg-accent border-y border-foreground overflow-hidden py-4">
         <div className="marquee-track">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex items-center shrink-0" aria-hidden={copy === 1}>
               {ribbon.map((word) => (
                 <span key={`${copy}-${word}`} className="flex items-center">
-                  <span className="font-display italic text-3xl md:text-4xl px-8 whitespace-nowrap">{word}</span>
-                  <span className="text-[hsl(var(--gold))] text-lg">✦</span>
+                  <span className="display-italic text-[2.6rem] md:text-[3.4rem] px-8 whitespace-nowrap leading-none">{word}</span>
+                  <span className="text-2xl" aria-hidden>✺</span>
                 </span>
               ))}
             </div>
@@ -191,200 +225,183 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Promises */}
-      <section className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-border">
-            {promises.map((item, index) => (
-              <motion.div
-                key={item.title}
-                {...reveal}
-                transition={{ ...reveal.transition, delay: index * 0.08 }}
-                className="flex flex-col gap-4 px-5 lg:px-10 py-10"
-              >
-                <item.icon className="w-6 h-6 text-accent" strokeWidth={1.4} />
-                <div>
-                  <h3 className="font-display text-2xl font-semibold text-foreground">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{item.text}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      {/* ---------- 01 Bestsellers ---------- */}
+      <section className="px-4 sm:px-6 lg:px-10 pt-28 pb-32">
+        <SectionHead
+          number="01 / Bestsellers"
+          title="The morning"
+          italic="case"
+          aside={
+            <Link to="/shop" className="group inline-flex items-center gap-2 label">
+              <span className="link-animated">All {products.length} creations</span>
+              <ArrowUpRight className="w-4 h-4 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          }
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
+          {featured.map((product, index) => (
+            <ProductCard key={product.id} product={product} index={index} />
+          ))}
         </div>
       </section>
 
-      {/* Featured */}
-      <section className="py-28 lg:py-36">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
-            <SectionHeading eyebrow="Bestsellers" title="Featured" accent="creations" />
-            <motion.div {...reveal}>
-              <Link to="/shop" className="group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.18em] text-foreground">
-                <span className="link-animated">View all</span>
-                <span className="grid place-items-center w-10 h-10 rounded-full border border-border transition-all duration-500 ease-silk group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary">
-                  <ArrowRight className="w-4 h-4" />
-                </span>
-              </Link>
-            </motion.div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
-            {featuredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Collections */}
-      <section id="collections" className="py-28 lg:py-36 bg-gradient-cream scroll-mt-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-[1fr_auto] gap-8 items-end mb-16">
-            <SectionHeading eyebrow="Collections" title="Something for every" accent="occasion" />
-            <motion.p {...reveal} className="text-muted-foreground text-lg max-w-sm leading-relaxed">
-              From a morning croissant to a three-tier wedding cake, browse by craft.
-            </motion.p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* ---------- 02 Collections: a list that shows its picture ---------- */}
+      <section id="collections" className="paper border-t border-foreground px-4 sm:px-6 lg:px-10 pt-28 pb-32 scroll-mt-20">
+        <SectionHead number="02 / Collections" title="Browse by" italic="craft" />
+        <div className="grid grid-cols-12 gap-x-10">
+          <ul className="col-span-12 lg:col-span-7">
             {categories.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 48 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 1, delay: index * 0.1, ease: silk }}
-                className={`group ${index % 2 === 1 ? 'lg:mt-16' : ''}`}
-              >
-                <Link to={`/shop?category=${category.id}`} className="block">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-[1.5rem] shadow-card">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-[1600ms] ease-silk group-hover:scale-[1.08]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[hsl(22_40%_7%/0.88)] via-[hsl(22_40%_7%/0.15)] to-transparent" />
-                    <span className="absolute top-5 left-5 font-display italic text-xl text-white/80">0{index + 1}</span>
-                    <div className="absolute inset-x-0 bottom-0 p-6">
-                      <h3 className="font-display text-[1.9rem] font-semibold leading-tight text-white">{category.name}</h3>
-                      <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-700 ease-silk">
-                        <p className="overflow-hidden text-sm text-white/75 leading-relaxed">
-                          <span className="block pt-2">{category.description}</span>
-                        </p>
-                      </div>
-                      <span className="mt-4 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold-soft))]">
-                        Discover
-                        <ArrowRight className="w-3.5 h-3.5 transition-transform duration-500 group-hover:translate-x-1" />
-                      </span>
-                    </div>
-                  </div>
+              <li key={category.id} className="border-b border-foreground/30 first:border-t">
+                <Link
+                  to={`/shop?category=${category.id}`}
+                  onMouseEnter={() => setHovered(index)}
+                  onFocus={() => setHovered(index)}
+                  className="group grid grid-cols-[3rem_1fr_auto] items-center gap-4 py-7"
+                >
+                  <span className="label opacity-60 tabular">0{index + 1}</span>
+                  <span>
+                    <span
+                      className={`block display text-[2.6rem] sm:text-[3.6rem] leading-[0.95] transition-transform duration-700 ease-silk ${
+                        hovered === index ? 'translate-x-3' : ''
+                      }`}
+                    >
+                      {category.name}
+                    </span>
+                    <span className="block mt-2 text-sm text-muted-foreground">{category.description}</span>
+                  </span>
+                  <span
+                    className={`grid place-items-center w-12 h-12 rounded-full border border-foreground transition-colors duration-300 ${
+                      hovered === index ? 'bg-accent' : ''
+                    }`}
+                  >
+                    <ArrowUpRight className="w-5 h-5" strokeWidth={1.5} />
+                  </span>
                 </Link>
-              </motion.div>
+                {/* On small screens the picture sits in the row */}
+                <div className="lg:hidden arch aspect-[16/10] border border-foreground mb-7">
+                  <img src={category.image} alt="" loading="lazy" className="w-full h-full object-cover" />
+                </div>
+              </li>
             ))}
+          </ul>
+
+          <div className="hidden lg:block col-span-5">
+            <div className="sticky top-28">
+              <div className="relative arch aspect-[4/5] border border-foreground bg-muted">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.img
+                    key={categories[hovered].id}
+                    src={categories[hovered].image}
+                    alt={categories[hovered].name}
+                    initial={{ opacity: 0, scale: 1.12 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8, ease: silk }}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </AnimatePresence>
+              </div>
+              <p className="mt-4 label opacity-60 text-right">
+                {String(hovered + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Our Story */}
-      <section id="story" ref={storyRef} className="py-28 lg:py-40 scroll-mt-20 overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-          <motion.div {...reveal} className="relative">
-            <div className="aspect-[4/5] rounded-[2rem] overflow-hidden shadow-luxury">
+      {/* ---------- 03 The house ---------- */}
+      <section id="story" ref={storyRef} className="bg-foreground text-background px-4 sm:px-6 lg:px-10 pt-28 pb-32 scroll-mt-20">
+        <div className="grid grid-cols-12 gap-x-6 items-end border-b border-background/40 pb-8 mb-16">
+          <p className="col-span-12 md:col-span-2 label mb-4 md:mb-2 opacity-70">03 / The house</p>
+          <h2 className="col-span-12 md:col-span-10 display text-[3.4rem] sm:text-[5rem] lg:text-[6.5rem]">
+            Four generations, <span className="display-italic text-accent">one oven.</span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-12 gap-x-10 gap-y-14 items-start">
+          <div className="col-span-12 md:col-span-5">
+            <div className="arch aspect-[3/4] border border-background/60">
               <motion.img
                 style={{ y: storyImageY }}
                 src={storyImage}
                 alt="Sourdough loaves fresh from the oven"
-                className="w-full h-[115%] -mt-[7.5%] object-cover"
+                className="w-full h-[116%] -mt-[8%] object-cover"
               />
             </div>
-            <div className="absolute -bottom-10 right-4 md:-right-10 bg-primary text-primary-foreground rounded-[1.5rem] px-8 py-7 shadow-luxury">
-              <p className="font-display text-6xl font-semibold leading-none tabular">
-                <span ref={years.ref}>{years.value}</span>+
-              </p>
-              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[hsl(var(--gold-soft))]">years of baking</p>
-            </div>
-          </motion.div>
+          </div>
 
-          <div>
-            <SectionHeading eyebrow="Our story" title="Four generations," accent="one oven" />
-            <motion.div {...reveal} transition={{ ...reveal.transition, delay: 0.1 }}>
-              <p className="mt-8 text-muted-foreground text-lg leading-relaxed">
-                Maison Dorée began as a single wood-fired oven on Rue de la Paix. Today our twelve bakers
-                still laminate every croissant by hand, feed the same sourdough starter every night and
-                pipe each macaron to order.
-              </p>
-              <p className="mt-5 font-display italic text-2xl text-foreground leading-snug">
-                “We bake in small batches, so what reaches you was made for you, that morning.”
-              </p>
+          <div className="col-span-12 md:col-span-7 md:pl-6">
+            <motion.blockquote
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 1, ease: silk }}
+              className="display-italic text-[2.2rem] sm:text-[3rem] leading-[1.05]"
+            >
+              “We bake in small batches, so what reaches you was made for you, that morning.”
+            </motion.blockquote>
+            <p className="mt-10 max-w-xl text-[17px] leading-relaxed opacity-80">
+              Maison Dorée began as a single wood-fired oven on Rue de la Paix. Today twelve bakers still
+              laminate every croissant by hand, feed the same sourdough starter every night and pipe each
+              macaron to order.
+            </p>
 
-              <dl className="grid grid-cols-3 gap-6 border-t border-border pt-10 mt-10 mb-12">
-                <Stat value={12} suffix="" label="Master bakers" />
-                <Stat value={25} suffix="+" label="Awards won" />
-                <Stat value={48} suffix="h" label="Sourdough ferment" />
-              </dl>
-
-              <Link to="/shop" className="group btn-pill">
-                Taste the difference
-                <span className="pill-arrow"><ArrowRight className="w-4 h-4" /></span>
-              </Link>
-            </motion.div>
+            <dl className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-8">
+              <Stat value={130} suffix="+" label="Years of baking" />
+              <Stat value={12} suffix="" label="Master bakers" />
+              <Stat value={48} suffix="h" label="Sourdough ferment" />
+            </dl>
           </div>
         </div>
       </section>
 
-      {/* Reviews */}
-      <section id="reviews" className="py-28 lg:py-36 bg-secondary/70 scroll-mt-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-16">
-            <SectionHeading eyebrow="Kind words" title="Loved by our" accent="regulars" align="center" />
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, index) => (
-              <motion.figure
-                key={t.name}
-                {...reveal}
-                transition={{ ...reveal.transition, delay: index * 0.12 }}
-                className="relative bg-card rounded-[1.5rem] p-9 shadow-card flex flex-col transition-transform duration-700 ease-silk hover:-translate-y-1"
-              >
-                <span className="font-display text-7xl leading-none text-[hsl(var(--gold))] h-10" aria-hidden>“</span>
-                <blockquote className="font-display text-[1.45rem] leading-snug text-foreground flex-1 mt-2">
-                  {t.quote}
-                </blockquote>
-                <figcaption className="mt-8 pt-6 border-t border-border flex items-center justify-between gap-4">
-                  <div>
-                    <p className="font-semibold text-foreground">{t.name}</p>
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground mt-1">{t.detail}</p>
-                  </div>
-                  <Rating value={t.rating} />
-                </figcaption>
-              </motion.figure>
-            ))}
-          </div>
+      {/* ---------- 04 Kind words ---------- */}
+      <section id="reviews" className="px-4 sm:px-6 lg:px-10 pt-28 pb-32 scroll-mt-20">
+        <SectionHead number="04 / Kind words" title="From our" italic="regulars" />
+        <div className="grid md:grid-cols-3 border-l border-foreground/30">
+          {testimonials.map((t, index) => (
+            <motion.figure
+              key={t.name}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.9, delay: index * 0.1, ease: silk }}
+              className="border-r border-b md:border-b-0 border-foreground/30 px-6 lg:px-10 py-8 flex flex-col"
+            >
+              <span className="display text-[6rem] leading-[0.6] h-12" aria-hidden>“</span>
+              <blockquote className="display text-[1.9rem] leading-[1.05] flex-1">{t.quote}</blockquote>
+              <figcaption className="mt-10 flex items-end justify-between gap-4">
+                <span>
+                  <span className="block font-semibold">{t.name}</span>
+                  <span className="block label text-[10px] opacity-60 mt-1.5">{t.detail}</span>
+                </span>
+                <Rating value={t.rating} />
+              </figcaption>
+            </motion.figure>
+          ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative py-32 lg:py-40 bg-primary text-primary-foreground overflow-hidden grain">
-        <motion.div {...reveal} className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="ornament mb-10" aria-hidden><span className="text-sm">✦</span></div>
-          <h2 className="display-xl mx-auto max-w-4xl">
-            Ready to <span className="italic font-medium text-[hsl(var(--gold-soft))]">indulge?</span>
+      {/* ---------- Order ---------- */}
+      <section className="bg-accent border-y border-foreground px-4 sm:px-6 lg:px-10 py-24 lg:py-28 overflow-hidden">
+        <div className="grid grid-cols-12 gap-6 items-end">
+          <h2 className="col-span-12 lg:col-span-9 display text-[18vw] lg:text-[12.5vw] leading-[0.82]">
+            <Rise onView>Order by</Rise>
+            <Rise onView delay={0.12}>
+              <span className="display-italic">2 pm.</span>
+            </Rise>
           </h2>
-          <p className="mt-8 text-primary-foreground/75 text-lg max-w-xl mx-auto leading-relaxed">
-            Order by 2 PM for same-day delivery, or plan a bespoke celebration cake with our pastry chef.
-          </p>
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/shop" className="group btn-pill-light">
-              Start shopping
-              <span className="pill-arrow"><ArrowRight className="w-4 h-4" /></span>
-            </Link>
-            <Link to="/shop?category=cakes" className="btn-pill-ghost border-primary-foreground/35 text-primary-foreground hover:bg-white/10">
-              Design a cake
-            </Link>
+          <div className="col-span-12 lg:col-span-3 lg:pb-6">
+            <p className="text-[17px] leading-relaxed max-w-xs">
+              Delivered the same day across Paris, or plan a celebration cake with our pastry chef.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/shop" className="btn-ink">
+                Start your box <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </section>
     </div>
   );
