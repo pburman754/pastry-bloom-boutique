@@ -47,7 +47,7 @@ const Seal = ({ className = '' }: { className?: string }) => (
           <path id="seal-circle" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
         </defs>
         <text className="fill-current font-body" style={{ fontSize: 15, letterSpacing: '0.3em', fontWeight: 600 }}>
-          <textPath href="#seal-circle">MAISON DORÉE ✺ FONDÉE EN 1892 ✺ PARIS ✺ </textPath>
+          <textPath href="#seal-circle">MAISON DORÉE ✺ FONDÉE EN 1892 ✺ </textPath>
         </text>
       </svg>
       <span className="absolute inset-0 grid place-items-center display-italic text-[2.6rem]">M</span>

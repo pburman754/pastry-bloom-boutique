@@ -12,7 +12,7 @@ const Awning = ({ className = '' }: { className?: string }) => {
   const reduce = useReducedMotion();
   const r = STRIPE / 2 - 1;
   const stripe = (x: number) =>
-    `M${x + 1},0 H${x + STRIPE - 1} V${DROP} A${r},${r} 0 0 1 ${x + 1},${DROP} Z`;
+    `M${x + 1},4 H${x + STRIPE - 1} V${DROP} A${r},${r} 0 0 1 ${x + 1},${DROP} Z`;
 
   return (
     <motion.div
@@ -24,7 +24,7 @@ const Awning = ({ className = '' }: { className?: string }) => {
     >
       <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <pattern id="awning-stripes" width={STRIPE * 2} height="86" patternUnits="userSpaceOnUse">
+          <pattern id="awning-stripes" width={STRIPE * 2} height="96" patternUnits="userSpaceOnUse">
             <path d={stripe(0)} fill="hsl(var(--accent))" stroke="hsl(var(--foreground))" strokeWidth="1.25" />
             <path d={stripe(STRIPE)} fill="hsl(var(--card))" stroke="hsl(var(--foreground))" strokeWidth="1.25" />
           </pattern>
