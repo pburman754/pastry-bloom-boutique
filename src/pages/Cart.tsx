@@ -49,7 +49,7 @@ const Cart = () => {
             <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
               <ShoppingBag className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h1 className="font-display text-3xl font-bold text-foreground mb-4">
+            <h1 className="font-display text-3xl font-semibold text-foreground mb-4">
               Your Cart is Empty
             </h1>
             <p className="text-muted-foreground mb-8">
@@ -57,7 +57,7 @@ const Cart = () => {
             </p>
             <Button
               asChild
-              className="bg-gradient-luxury hover:shadow-luxury font-semibold px-8"
+              className="bg-gradient-luxury hover:shadow-luxury rounded-full font-semibold px-8"
             >
               <Link to="/shop">
                 Start Shopping
@@ -80,7 +80,7 @@ const Cart = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="font-display text-4xl lg:text-6xl font-bold text-foreground mb-4">
+          <h1 className="font-display text-5xl lg:text-7xl font-semibold tracking-[-0.02em] text-foreground mb-4">
             Shopping Cart
           </h1>
           <p className="text-muted-foreground text-lg">
@@ -243,7 +243,7 @@ const Cart = () => {
 
                 <div className="flex items-center justify-between text-lg">
                   <span className="font-semibold text-foreground">Total</span>
-                  <span className="font-display font-bold text-foreground text-xl">
+                  <span className="font-display font-semibold text-foreground text-xl">
                     ${finalTotal.toFixed(2)}
                   </span>
                 </div>
@@ -252,7 +252,7 @@ const Cart = () => {
               <div className="space-y-4 mt-8">
                 <Button
                   asChild
-                  className="w-full bg-gradient-luxury hover:shadow-luxury font-semibold py-3 text-lg"
+                  className="w-full bg-gradient-luxury hover:shadow-luxury rounded-full font-semibold py-3 text-lg"
                 >
                   <Link to="/checkout">
                     Proceed to Checkout

@@ -1,3 +1,10 @@
+import croissantsImg from "@/assets/croissants.jpg";
+import almondCroissantImg from "@/assets/almond-croissant.jpg";
+import macaronsImg from "@/assets/macarons.jpg";
+import breadImg from "@/assets/artisan-bread.jpg";
+import cakeImg from "@/assets/wedding-cake.jpg";
+import petitFoursImg from "@/assets/cookies-petitfours.jpg";
+
 export interface Product {
   id: string;
   name: string;
@@ -22,25 +29,25 @@ export const categories: Category[] = [
   {
     id: "croissants",
     name: "Croissants & Viennoiseries",
-    image: "/src/assets/croissants.jpg",
+    image: croissantsImg,
     description: "Buttery, flaky pastries made with finest French butter"
   },
   {
     id: "macarons",
     name: "Macarons & Petit Fours",
-    image: "/src/assets/macarons.jpg",
+    image: macaronsImg,
     description: "Delicate almond cookies in exquisite flavors"
   },
   {
     id: "breads",
     name: "Artisan Breads",
-    image: "/src/assets/artisan-bread.jpg",
+    image: breadImg,
     description: "Traditional sourdough and specialty breads"
   },
   {
     id: "cakes",
     name: "Luxury Cakes",
-    image: "/src/assets/wedding-cake.jpg",
+    image: cakeImg,
     description: "Bespoke celebration cakes and desserts"
   }
 ];
@@ -50,7 +57,7 @@ export const products: Product[] = [
     id: "1",
     name: "Classic Butter Croissant",
     price: 4.50,
-    image: "/src/assets/croissants.jpg",
+    image: croissantsImg,
     description: "Hand-rolled with French butter, perfectly flaky and golden",
     category: "croissants",
     rating: 4.9,
@@ -61,7 +68,7 @@ export const products: Product[] = [
     id: "2",
     name: "Rose Petal Macaron",
     price: 3.25,
-    image: "/src/assets/macarons.jpg",
+    image: macaronsImg,
     description: "Delicate almond shells with rose-infused buttercream",
     category: "macarons",
     rating: 4.8,
@@ -73,7 +80,7 @@ export const products: Product[] = [
     id: "3",
     name: "Artisan Sourdough",
     price: 12.00,
-    image: "/src/assets/artisan-bread.jpg",
+    image: breadImg,
     description: "48-hour fermented sourdough with crispy crust",
     category: "breads",
     rating: 4.7,
@@ -83,7 +90,7 @@ export const products: Product[] = [
     id: "4",
     name: "Celebration Cake",
     price: 145.00,
-    image: "/src/assets/wedding-cake.jpg",
+    image: cakeImg,
     description: "Three-tier vanilla bean cake with Swiss buttercream",
     category: "cakes",
     rating: 5.0,
@@ -94,7 +101,7 @@ export const products: Product[] = [
     id: "5",
     name: "Luxury Petit Fours",
     price: 8.75,
-    image: "/src/assets/cookies-petitfours.jpg",
+    image: petitFoursImg,
     description: "Miniature cakes with delicate glazes and decorations",
     category: "macarons",
     rating: 4.8,
@@ -102,13 +109,13 @@ export const products: Product[] = [
   },
   {
     id: "6",
-    name: "Pain au Chocolat",
+    name: "Croissant aux Amandes",
     price: 5.25,
-    image: "/src/assets/croissants.jpg",
-    description: "Buttery pastry wrapped around premium dark chocolate",
+    image: almondCroissantImg,
+    description: "Twice-baked croissant filled with almond frangipane and toasted flakes",
     category: "croissants",
-    rating: 4.9,
-    ingredients: ["French butter", "Belgian chocolate", "Organic flour", "Sea salt"]
+    rating: 4.6,
+    ingredients: ["French butter", "Almond frangipane", "Organic flour", "Toasted almonds"]
   }
 ];
 
@@ -116,7 +123,7 @@ export const recipes = [
   {
     id: "recipe-1",
     title: "Classic French Macaron",
-    image: "/src/assets/macarons.jpg",
+    image: macaronsImg,
     description: "Master the art of perfect macarons with our step-by-step guide",
     difficulty: "Advanced",
     time: "2 hours",
@@ -125,7 +132,7 @@ export const recipes = [
   {
     id: "recipe-2",
     title: "Artisan Croissant",
-    image: "/src/assets/croissants.jpg",
+    image: croissantsImg,
     description: "Create buttery, flaky croissants using traditional French techniques",
     difficulty: "Expert",
     time: "3 days",

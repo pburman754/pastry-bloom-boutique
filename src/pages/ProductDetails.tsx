@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Plus, Minus, Heart, Share2, ArrowLeft, ShoppingBag } from 'lucide-react';
+import { Plus, Minus, Heart, Share2, ArrowLeft, ShoppingBag, Check } from 'lucide-react';
 import { products } from '@/data/mockData';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import ProductCard from '@/components/products/ProductCard';
+import Rating from '@/components/products/Rating';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -18,9 +19,15 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
 
   const product = products.find(p => p.id === id);
-  const relatedProducts = products
-    .filter(p => p.id !== id && p.category === product?.category)
-    .slice(0, 3);
+  // Same-category items first, then fill with other bestsellers so the row is never sparse.
+  const relatedProducts = [
+    ...products.filter(p => p.id !== id && p.category === product?.category),
+    ...products.filter(p => p.id !== id && p.category !== product?.category),
+  ].slice(0, 3);
+
+  useEffect(() => {
+    setQuantity(1);
+  }, [id]);
 
   if (!product) {
     return (
@@ -34,9 +41,7 @@ const ProductDetails = () => {
   }
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addItem(product);
-    }
+    addItem(product, quantity);
     toast({
       title: "Added to cart",
       description: `${quantity} × ${product.name} added to your cart.`,
@@ -134,31 +139,20 @@ const ProductDetails = () => {
 
             {/* Name & Rating */}
             <div>
-              <h1 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
+              <h1 className="font-display text-4xl lg:text-6xl font-semibold tracking-[-0.015em] text-foreground mb-4">
                 {product.name}
               </h1>
               <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(product.rating)
-                          ? 'text-accent fill-accent'
-                          : 'text-muted-foreground/30'
-                      }`}
-                    />
-                  ))}
-                </div>
+                <Rating value={product.rating} size="md" />
                 <span className="text-muted-foreground">
-                  {product.rating} (127 reviews)
+                  {product.rating.toFixed(1)} · 127 reviews
                 </span>
               </div>
             </div>
 
             {/* Price */}
             <div className="space-y-2">
-              <p className="font-display text-3xl font-bold text-foreground">
+              <p className="font-display text-3xl font-semibold text-foreground">
                 ${product.price.toFixed(2)}
               </p>
               <p className="text-muted-foreground">
@@ -228,13 +222,17 @@ const ProductDetails = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-gradient-luxury hover:shadow-luxury font-semibold py-3 text-lg"
+                  className="flex-1 bg-gradient-luxury hover:shadow-luxury rounded-full font-semibold py-3 text-lg"
                 >
                   <ShoppingBag className="w-5 h-5 mr-2" />
                   Add to Cart - ${(product.price * quantity).toFixed(2)}
                 </Button>
                 <Button
                   variant="outline"
+                  onClick={() => {
+                    addItem(product, quantity);
+                    navigate('/checkout');
+                  }}
                   className="sm:w-auto font-semibold py-3 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 >
                   Buy Now
@@ -243,20 +241,16 @@ const ProductDetails = () => {
             </div>
 
             {/* Additional Info */}
-            <div className="bg-muted rounded-lg p-4 space-y-2 text-sm">
-              <p className="flex items-center justify-between">
-                <span>Freshly made daily</span>
-                <span className="text-accent font-medium">✓</span>
-              </p>
-              <p className="flex items-center justify-between">
-                <span>Made with organic ingredients</span>
-                <span className="text-accent font-medium">✓</span>
-              </p>
-              <p className="flex items-center justify-between">
-                <span>Same-day delivery available</span>
-                <span className="text-accent font-medium">✓</span>
-              </p>
-            </div>
+            <ul className="bg-muted rounded-xl p-4 space-y-2 text-sm">
+              {['Baked fresh every morning', 'Made with organic ingredients', 'Same-day delivery available'].map(line => (
+                <li key={line} className="flex items-center gap-3">
+                  <span className="w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-accent" />
+                  </span>
+                  {line}
+                </li>
+              ))}
+            </ul>
           </motion.div>
         </div>
 
@@ -265,15 +259,16 @@ const ProductDetails = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
             className="space-y-8"
           >
             <div className="text-center">
-              <h2 className="font-display text-3xl font-bold text-foreground mb-4">
+              <h2 className="font-display text-3xl font-semibold text-foreground mb-4">
                 You Might Also Like
               </h2>
               <p className="text-muted-foreground">
-                More delicious creations from the same category
+                More handcrafted favourites from our ovens
               </p>
             </div>
 

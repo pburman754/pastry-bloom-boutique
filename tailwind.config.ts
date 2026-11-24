@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        'display': ['Playfair Display', 'serif'],
-        'body': ['Inter', 'sans-serif'],
+        'display': ['"Cormorant Garamond"', 'ui-serif', 'Georgia', 'serif'],
+        'body': ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -98,6 +98,14 @@ export default {
         "float": {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" }
+        },
+        "marquee": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" }
+        },
+        "scroll-cue": {
+          "0%": { transform: "translateY(-100%)" },
+          "60%, 100%": { transform: "translateY(220%)" }
         }
       },
       animation: {
@@ -109,6 +117,11 @@ export default {
         "slide-in-right": "slide-in-right 0.5s ease-out",
         "shimmer": "shimmer 2s infinite",
         "float": "float 3s ease-in-out infinite",
+        "marquee": "marquee 38s linear infinite",
+        "scroll-cue": "scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite",
+      },
+      transitionTimingFunction: {
+        "silk": "cubic-bezier(0.22, 1, 0.36, 1)",
       },
     },
   },

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { Product } from '@/data/mockData';
+import React, { createContext, useContext, useEffect, useReducer, ReactNode } from 'react';
+import { Product, products } from '@/data/mockData';
 
 export interface CartItem extends Product {
   quantity: number;
@@ -12,7 +12,7 @@ interface CartState {
 }
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: Product }
+  | { type: 'ADD_ITEM'; payload: { product: Product; quantity: number } }
   | { type: 'REMOVE_ITEM'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' };
@@ -26,18 +26,19 @@ const initialState: CartState = {
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
-      const existingItem = state.items.find(item => item.id === action.payload.id);
-      
+      const { product, quantity } = action.payload;
+      const existingItem = state.items.find(item => item.id === product.id);
+
       if (existingItem) {
         const updatedItems = state.items.map(item =>
-          item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
         return calculateTotals(updatedItems);
       }
-      
-      const newItems = [...state.items, { ...action.payload, quantity: 1 }];
+
+      const newItems = [...state.items, { ...product, quantity }];
       return calculateTotals(newItems);
     }
     
@@ -75,8 +76,27 @@ const calculateTotals = (items: CartItem[]): CartState => {
   return { items, total, itemCount };
 };
 
+const CART_STORAGE_KEY = 'maison-doree-cart';
+
+const loadCart = (fallback: CartState): CartState => {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return fallback;
+    const saved = JSON.parse(raw) as { id: string; quantity: number }[];
+    if (!Array.isArray(saved)) return fallback;
+    // Re-hydrate from the catalogue so prices/images are always current.
+    const items = saved.flatMap(({ id, quantity }) => {
+      const product = products.find(p => p.id === id);
+      return product && quantity > 0 ? [{ ...product, quantity }] : [];
+    });
+    return calculateTotals(items);
+  } catch {
+    return fallback;
+  }
+};
+
 interface CartContextType extends CartState {
-  addItem: (product: Product) => void;
+  addItem: (product: Product, quantity?: number) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -85,10 +105,20 @@ interface CartContextType extends CartState {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
-  
-  const addItem = (product: Product) => {
-    dispatch({ type: 'ADD_ITEM', payload: product });
+  const [state, dispatch] = useReducer(cartReducer, initialState, loadCart);
+
+  // Persist the cart so it survives refreshes and new tabs.
+  useEffect(() => {
+    try {
+      const compact = state.items.map(({ id, quantity }) => ({ id, quantity }));
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(compact));
+    } catch {
+      /* storage unavailable (private mode) - cart still works in memory */
+    }
+  }, [state.items]);
+
+  const addItem = (product: Product, quantity = 1) => {
+    dispatch({ type: 'ADD_ITEM', payload: { product, quantity } });
   };
   
   const removeItem = (id: string) => {

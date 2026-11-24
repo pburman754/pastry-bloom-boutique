@@ -25,10 +25,10 @@ const Footer = () => {
     {
       title: 'Company',
       links: [
-        { name: 'About Us', href: '/about' },
-        { name: 'Our Story', href: '/story' },
-        { name: 'Careers', href: '/careers' },
-        { name: 'Press', href: '/press' },
+        { name: 'Our Story', href: '/#story' },
+        { name: 'Collections', href: '/#collections' },
+        { name: 'Reviews', href: '/#reviews' },
+        { name: 'Celebration Cakes', href: '/shop?category=cakes' },
       ]
     },
     {
@@ -51,18 +51,19 @@ const Footer = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="space-y-4"
           >
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-luxury rounded-full flex items-center justify-center shadow-gold">
-                <span className="text-white font-display font-bold text-lg">M</span>
-              </div>
-              <div>
-                <h3 className="font-display text-xl font-semibold text-foreground">
+              <span className="grid place-items-center w-11 h-11 rounded-full border border-[hsl(var(--gold))] text-foreground">
+                <span className="font-display italic text-2xl leading-none -mt-0.5">M</span>
+              </span>
+              <div className="leading-none">
+                <h3 className="font-display text-[1.75rem] font-semibold text-foreground">
                   Maison Dorée
                 </h3>
-                <p className="text-xs text-muted-foreground">Premium Bakery</p>
+                <p className="text-[9px] font-semibold uppercase tracking-[0.38em] text-muted-foreground mt-1.5">Pâtisserie · Paris</p>
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
@@ -91,6 +92,7 @@ const Footer = () => {
               key={section.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="space-y-4"
             >
@@ -117,6 +119,7 @@ const Footer = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
           className="border-t border-border pt-8 mb-8"
         >
@@ -133,7 +136,7 @@ const Footer = () => {
                 placeholder="Enter your email"
                 className="flex-1"
               />
-              <Button className="bg-gradient-luxury hover:shadow-luxury">
+              <Button className="bg-gradient-luxury hover:shadow-luxury rounded-full">
                 Subscribe
               </Button>
             </div>
@@ -144,12 +147,13 @@ const Footer = () => {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="border-t border-border pt-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
         >
           {/* Copyright */}
           <p className="text-muted-foreground text-sm">
-            © 2024 Maison Dorée. All rights reserved.
+            © 2026 Maison Dorée. All rights reserved.
           </p>
 
           {/* Social Links */}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, Grid, List, SlidersHorizontal } from 'lucide-react';
-import { products, categories } from '@/data/mockData';
+import { products } from '@/data/mockData';
 import ProductCard from '@/components/products/ProductCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,8 @@ const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
+  // The URL is the single source of truth for the category, so header/footer links always work.
+  const selectedCategory = searchParams.get('category') || 'all';
   const [sortBy, setSortBy] = useState('name');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -53,14 +54,22 @@ const Shop = () => {
   }, [selectedCategory, searchQuery, sortBy]);
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
+    const next = new URLSearchParams(searchParams);
     if (category === 'all') {
-      searchParams.delete('category');
+      next.delete('category');
     } else {
-      searchParams.set('category', category);
+      next.set('category', category);
     }
-    setSearchParams(searchParams);
+    setSearchParams(next, { replace: true });
   };
+
+  const categoryChips = [
+    { id: 'all', label: 'All' },
+    { id: 'croissants', label: 'Croissants' },
+    { id: 'macarons', label: 'Macarons & Petit Fours' },
+    { id: 'breads', label: 'Breads' },
+    { id: 'cakes', label: 'Cakes' },
+  ];
 
   return (
     <div className="min-h-screen py-8">
@@ -72,7 +81,7 @@ const Shop = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="font-display text-4xl lg:text-6xl font-bold text-foreground mb-4">
+          <h1 className="font-display text-5xl lg:text-7xl font-semibold tracking-[-0.02em] text-foreground mb-4">
             Our Collection
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -88,7 +97,7 @@ const Shop = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="bg-card border border-border rounded-2xl p-6 mb-8 shadow-card"
         >
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
             {/* Search */}
             <div className="flex-1">
               <div className="relative">
@@ -102,25 +111,9 @@ const Shop = () => {
               </div>
             </div>
 
-            {/* Category Filter */}
-            <div className="lg:w-48">
-              <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-                <SelectTrigger className="h-12">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
+            <div className="flex gap-3">
             {/* Sort */}
-            <div className="lg:w-48">
+            <div className="flex-1 lg:w-48 lg:flex-none">
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="h-12">
                   <SelectValue />
@@ -135,7 +128,7 @@ const Shop = () => {
             </div>
 
             {/* View Mode */}
-            <div className="flex space-x-2">
+            <div className="hidden sm:flex space-x-2">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'outline'}
                 size="lg"
@@ -153,21 +146,33 @@ const Shop = () => {
                 <List className="w-5 h-5" />
               </Button>
             </div>
+            </div>
+          </div>
+
+          {/* Category chips */}
+          <div className="flex flex-wrap items-center gap-2 mt-5" role="tablist" aria-label="Filter by category">
+            {categoryChips.map(chip => {
+              const active = selectedCategory === chip.id;
+              return (
+                <button
+                  key={chip.id}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => handleCategoryChange(chip.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${
+                    active
+                      ? 'bg-primary text-primary-foreground border-primary shadow-card'
+                      : 'bg-background text-foreground border-border hover:border-accent hover:text-primary'
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Active Filters */}
-          <div className="flex flex-wrap items-center gap-2 mt-4">
-            {selectedCategory !== 'all' && (
-              <Badge variant="secondary" className="flex items-center gap-2">
-                Category: {categories.find(c => c.id === selectedCategory)?.name}
-                <button
-                  onClick={() => handleCategoryChange('all')}
-                  className="hover:bg-muted-foreground/20 rounded-full p-0.5"
-                >
-                  ×
-                </button>
-              </Badge>
-            )}
+          <div className="flex flex-wrap items-center gap-2 empty:hidden mt-4">
             {searchQuery && (
               <Badge variant="secondary" className="flex items-center gap-2">
                 Search: "{searchQuery}"
@@ -224,30 +229,13 @@ const Shop = () => {
                 setSearchQuery('');
                 handleCategoryChange('all');
               }}
-              className="bg-gradient-luxury hover:shadow-luxury"
+              className="bg-gradient-luxury hover:shadow-luxury rounded-full"
             >
               Clear Filters
             </Button>
           </motion.div>
         )}
 
-        {/* Load More (if needed for pagination) */}
-        {filteredProducts.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-center mt-16"
-          >
-            <Button
-              variant="outline"
-              size="lg"
-              className="font-semibold px-8"
-            >
-              Load More Products
-            </Button>
-          </motion.div>
-        )}
       </div>
     </div>
   );

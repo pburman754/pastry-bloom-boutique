@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, CreditCard, Truck, MapPin, Phone, Mail, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const orderPlaced = useRef(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -43,22 +44,32 @@ const Checkout = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Simulated order API (swap for a real endpoint / payment intent in production)
+    await new Promise(resolve => setTimeout(resolve, 1600));
+
+    const order = {
+      id: `MD-${Date.now().toString(36).toUpperCase().slice(-6)}`,
+      items: items.map(({ id, name, image, price, quantity }) => ({ id, name, image, price, quantity })),
+      subtotal: total,
+      deliveryFee,
+      total: finalTotal,
+      firstName: formData.firstName,
+      email: formData.email,
+      city: formData.city,
+    };
 
     toast({
       title: "Order placed successfully!",
-      description: "You will receive a confirmation email shortly.",
+      description: `Order ${order.id} is confirmed.`,
     });
 
+    orderPlaced.current = true;
+    navigate('/order-success', { state: { order }, replace: true });
     clearCart();
-    navigate('/order-success');
-    setIsSubmitting(false);
   };
 
-  if (items.length === 0) {
-    navigate('/cart');
-    return null;
+  if (items.length === 0 && !orderPlaced.current) {
+    return <Navigate to="/cart" replace />;
   }
 
   return (
@@ -71,7 +82,7 @@ const Checkout = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="font-display text-4xl lg:text-6xl font-bold text-foreground mb-4">
+          <h1 className="font-display text-5xl lg:text-7xl font-semibold tracking-[-0.02em] text-foreground mb-4">
             Checkout
           </h1>
           <p className="text-muted-foreground text-lg">
@@ -247,11 +258,14 @@ const Checkout = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input placeholder="Card Number" className="h-12" required />
-                  <Input placeholder="MM/YY" className="h-12" required />
-                  <Input placeholder="Cardholder Name" className="h-12" required />
-                  <Input placeholder="CVV" className="h-12" required />
+                  <Input placeholder="Card Number" name="cc-number" inputMode="numeric" autoComplete="cc-number" className="h-12" required />
+                  <Input placeholder="MM/YY" name="cc-exp" autoComplete="cc-exp" className="h-12" required />
+                  <Input placeholder="Cardholder Name" name="cc-name" autoComplete="cc-name" className="h-12" required />
+                  <Input placeholder="CVV" name="cc-csc" inputMode="numeric" autoComplete="cc-csc" className="h-12" required />
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  Demo store: no payment is taken. Use test card 4242 4242 4242 4242, any future date and any CVV.
+                </p>
               </div>
             </motion.div>
           </div>
@@ -311,7 +325,7 @@ const Checkout = () => {
                 <Separator />
                 <div className="flex items-center justify-between text-lg">
                   <span className="font-semibold text-foreground">Total</span>
-                  <span className="font-display font-bold text-foreground text-xl">
+                  <span className="font-display font-semibold text-foreground text-xl">
                     ${finalTotal.toFixed(2)}
                   </span>
                 </div>
@@ -321,7 +335,7 @@ const Checkout = () => {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-luxury hover:shadow-luxury font-semibold py-3 text-lg mt-6"
+                className="w-full bg-gradient-luxury hover:shadow-luxury rounded-full font-semibold py-3 text-lg mt-6"
               >
                 {isSubmitting ? (
                   <div className="flex items-center space-x-2">
